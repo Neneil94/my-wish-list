@@ -1,7 +1,7 @@
 {
   "name": "my-wish-list",
   "private": true,
-  "version": "0.1.0",
+  "version": "0.2.0",
   "type": "module",
   "description": "Private Wunschlisten-App für Familie und Freunde",
   "license": "MIT",
@@ -28,13 +28,13 @@
     "zod": "4.6.7"
   },
   "devDependencies": {
-    "@eslint/js": "9.39.5",
+    "@eslint/js": "10.0.1",
     "@tailwindcss/vite": "4.3.5",
     "@types/node": "22.20.5",
     "@types/react": "19.3.0",
     "@types/react-dom": "19.3.0",
     "@vitejs/plugin-react": "6.2.1",
-    "eslint": "9.39.5",
+    "eslint": "10.14.0",
     "eslint-plugin-react-hooks": "7.1.1",
     "globals": "17.14.0",
     "hash-wasm": "4.13.0",
@@ -46,6 +46,12 @@
   },
   "overrides": {
     "@typescript-eslint/typescript-estree": {
+      "minimatch": "11.0.5"
+    },
+    "eslint": {
+      "minimatch": "11.0.5"
+    },
+    "@eslint/config-array": {
       "minimatch": "11.0.5"
     }
   }

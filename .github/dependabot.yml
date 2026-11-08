@@ -7,6 +7,14 @@ updates:
     groups:
       dev-dependencies:
         dependency-type: development
+    ignore:
+      # typescript-eslint unterstützt nur TypeScript < 6.1. Majors erst übernehmen,
+      # wenn dessen peerDependencies sie erlauben (sonst schlägt das Update fehl).
+      - dependency-name: typescript
+        update-types: [version-update:semver-major]
+      # Node-Typen folgen der eingesetzten Node-Version (engines/CI), nicht der neuesten.
+      - dependency-name: '@types/node'
+        update-types: [version-update:semver-major]
   - package-ecosystem: github-actions
     directory: /
     schedule:
