@@ -113,5 +113,17 @@ select pg_temp.expect((select count(*) from public.group_members where role = 'a
 select pg_temp.expect((select count(*) from public.claims) = 0, 'Claims von A wurden mit Austritt entfernt');
 
 reset role;
+
+-- ---- Rate-Limits: Zählen, Sperren, Aufräumen (nur service_role) ----
+insert into public.rate_limits (key, window_start, hits) values ('alt', now() - interval '2 days', 99);
+grant execute on function pg_temp.expect(boolean, text) to service_role;
+set role service_role;
+select pg_temp.expect(public.rate_limit_hit('k', 2, 60), 'Rate-Limit: 1. Versuch erlaubt');
+select pg_temp.expect(public.rate_limit_hit('k', 2, 60), 'Rate-Limit: 2. Versuch erlaubt');
+select pg_temp.expect(not public.rate_limit_hit('k', 2, 60), 'Rate-Limit: 3. Versuch gesperrt');
+select pg_temp.expect(public.rate_limit_blocked('k', 2, 60), 'Rate-Limit: als gesperrt gemeldet');
+select pg_temp.expect(not exists (select 1 from public.rate_limits where key = 'alt'), 'Abgelaufene Rate-Limit-Einträge werden entfernt');
+reset role;
+
 select pg_temp.expect((select count(*) from public.recovery_codes) = 0, 'Testende');
 \echo 'ALLE RLS-TESTS BESTANDEN'
