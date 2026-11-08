@@ -103,7 +103,9 @@ npx supabase@3.0.0 functions serve --env-file supabase/functions/.env.local
    - „Allow new users to sign up“ **aus** (Konten entstehen nur über die Edge Function)
    - E-Mail-Provider **aktiviert lassen** (wird für den Username-Login gebraucht),
      dort „Confirm email“ **aus**, „Secure password change“ **an**
-   - Passwort: Mindestlänge **12**, „Lowercase, uppercase letters and digits“ (zusätzliche Absicherung)
+   - Passwort: Mindestlänge **12**, bei „Password requirements“ **keine** Zeichenklassen erzwingen
+     (die Edge Function prüft eigene Regeln; strengere Supabase-Regeln würden gültige Registrierungen ablehnen)
+   - Alternativ alles auf einmal aus `supabase/config.toml` übernehmen: `npx supabase@3.0.0 config diff`, dann `config push`
 3. Schema einspielen:
 
    ```bash

@@ -180,7 +180,11 @@ async function handle(req: Request, body: Record<string, unknown>): Promise<unkn
         user_metadata: { username },
       })
       if (error || !created.user) {
-        throw new HttpError(error?.status === 422 ? 409 : 500, error?.status === 422 ? 'username_taken' : 'server_error')
+        const code = (error as { code?: string } | null)?.code
+        if (code === 'email_exists' || code === 'user_already_exists') throw new HttpError(409, 'username_taken')
+        if (code === 'weak_password') throw new HttpError(400, 'password_too_simple')
+        console.error('createUser failed', code ?? error?.status)
+        throw new HttpError(500, 'server_error')
       }
       const { error: profileError } = await admin.from('profiles').insert({
         id: created.user.id, username, display_name: displayName,

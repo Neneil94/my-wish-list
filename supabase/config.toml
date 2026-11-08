@@ -7,19 +7,21 @@ schemas = ["public"]
 max_rows = 500
 
 [auth]
-site_url = "http://localhost:5173"
+site_url = "https://neneil94.github.io/my-wish-list/"
 # Öffentliche Registrierung AUS – Konten entstehen nur über die Edge Function.
 enable_signup = false
 jwt_expiry = 3600
 enable_refresh_token_rotation = true
 refresh_token_reuse_interval = 10
 minimum_password_length = 12
-password_requirements = "letters_digits"
+# Keine Zeichenklassen-Pflicht hier: Die Edge Function erzwingt eigene Regeln
+# (Buchstaben + Zahl ODER Sonderzeichen, HIBP-Check). Abweichende Supabase-Regeln
+# würden gültige Registrierungen ablehnen.
 
 [auth.email]
 # true = E-Mail/Passwort-Provider aktiv (nötig für den Username-Login).
 # Neue Konten verhindert das globale auth.enable_signup = false.
-enable_signup = true
+enabled = true
 enable_confirmations = false
 secure_password_change = true
 
