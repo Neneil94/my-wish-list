@@ -55,9 +55,49 @@ function json(body: unknown, status: number, origin: string | null): Response {
   })
 }
 
+/**
+ * Client-IP für Rate-Limits. Der ERSTE Eintrag von X-Forwarded-For ist vom Client
+ * frei wählbar (Proxys hängen nur hinten an) und daher ungeeignet.
+ *   1. cf-connecting-ip: setzt Cloudflare selbst, überschreibt Client-Werte.
+ *   2. sonst der LETZTE X-Forwarded-For-Eintrag (vom nächstgelegenen Proxy angehängt).
+ * Trotzdem nur "best effort" – die globalen Limits unten sind nicht umgehbar.
+ */
 function clientIp(req: Request): string {
-  const fwd = req.headers.get('x-forwarded-for') ?? ''
-  return fwd.split(',')[0]?.trim() || 'unknown'
+  const cf = req.headers.get('cf-connecting-ip')?.trim()
+  if (cf) return cf
+  const parts = (req.headers.get('x-forwarded-for') ?? '').split(',').map((s) => s.trim()).filter(Boolean)
+  return parts.at(-1) ?? 'unknown'
+}
+
+// Globale Obergrenzen (unabhängig von der IP, also nicht durch IP-Wechsel umgehbar).
+// Ein Angreifer kann damit höchstens die Zugangsprüfung kurzzeitig für alle sperren,
+// aber das Zugangspasswort nicht in großem Stil durchprobieren.
+const GLOBAL_ACCESS_FAILURES = 30 // pro 15 Minuten
+const GLOBAL_REGISTRATIONS = 30 // pro 24 Stunden
+
+function anonClient(): SupabaseClient {
+  return createClient(SUPABASE_URL, ANON_KEY, {
+    auth: { persistSession: false, autoRefreshToken: false },
+  })
+}
+
+/**
+ * Meldet ALLE Sessions eines Nutzers ab (Refresh-Tokens werden ungültig).
+ * Die Admin-API kann Sessions nur über ein JWT des Nutzers beenden – daher
+ * kurz mit dem (neuen) Passwort anmelden und dann global abmelden.
+ */
+async function revokeAllSessions(username: string, password: string): Promise<void> {
+  const { data, error } = await anonClient().auth.signInWithPassword({
+    email: usernameToEmail(username), password,
+  })
+  if (error || !data.session) throw new HttpError(500, 'server_error')
+  const { error: signOutError } = await admin.auth.admin.signOut(data.session.access_token, 'global')
+  if (signOutError) throw new HttpError(500, 'server_error')
+}
+
+function checkAccess(ip: string, code: unknown): Promise<void> {
+  return limitFailures('access:global', GLOBAL_ACCESS_FAILURES, 15 * 60, () =>
+    limitFailures(`access:${ip}`, 5, 15 * 60, () => checkAccessCode(code)))
 }
 
 async function limit(key: string, max: number, windowSeconds: number): Promise<void> {
@@ -115,7 +155,7 @@ async function storeNewRecoveryCode(userId: string): Promise<string> {
 }
 
 /** Prüft das JWT und das aktuelle Passwort des eingeloggten Nutzers. */
-async function reauthenticate(req: Request, password: unknown): Promise<{ id: string; username: string }> {
+async function reauthenticate(req: Request, password: unknown): Promise<{ id: string; username: string; jwt: string }> {
   const jwt = (req.headers.get('authorization') ?? '').replace(/^Bearer\s+/i, '')
   const { data, error } = await admin.auth.getUser(jwt)
   if (error || !data.user) throw new HttpError(401, 'not_authenticated')
@@ -124,16 +164,14 @@ async function reauthenticate(req: Request, password: unknown): Promise<{ id: st
   if (!profile) throw new HttpError(401, 'not_authenticated')
   await limitFailures(`reauth:${user.id}`, 5, 15 * 60, async () => {
     if (typeof password !== 'string' || password.length > 200) throw new HttpError(401, 'wrong_password')
-    const anon: SupabaseClient = createClient(SUPABASE_URL, ANON_KEY, {
-      auth: { persistSession: false, autoRefreshToken: false },
-    })
+    const anon = anonClient()
     const { error: signInError } = await anon.auth.signInWithPassword({
       email: usernameToEmail(profile.username), password,
     })
     if (signInError) throw new HttpError(401, 'wrong_password')
     await anon.auth.signOut({ scope: 'local' })
   })
-  return { id: user.id, username: profile.username }
+  return { id: user.id, username: profile.username, jwt }
 }
 
 async function resetPassword(username: string | null, code: string | null, newPassword: unknown): Promise<unknown> {
@@ -151,6 +189,9 @@ async function resetPassword(username: string | null, code: string | null, newPa
   const password = await assertGoodPassword(newPassword, username)
   const { error } = await admin.auth.admin.updateUserById(profile.id, { password })
   if (error) throw new HttpError(500, 'server_error')
+  // Wer das Konto vorher übernommen hatte, fliegt raus. Schlägt das fehl, bleibt
+  // der alte Code gültig (er wird erst danach ersetzt) – der Reset kann wiederholt werden.
+  await revokeAllSessions(username, password)
   // Code ist verbraucht → sofort einen neuen ausgeben.
   return { recoveryCode: await storeNewRecoveryCode(profile.id) }
 }
@@ -160,13 +201,14 @@ async function handle(req: Request, body: Record<string, unknown>): Promise<unkn
 
   switch (body.action) {
     case 'check-access': {
-      await limitFailures(`access:${ip}`, 5, 15 * 60, () => checkAccessCode(body.accessCode))
+      await checkAccess(ip, body.accessCode)
       return { ok: true }
     }
 
     case 'register': {
-      await limitFailures(`access:${ip}`, 5, 15 * 60, () => checkAccessCode(body.accessCode))
+      await checkAccess(ip, body.accessCode)
       await limit(`register:${ip}`, 20, 24 * 60 * 60)
+      await limit('register:global', GLOBAL_REGISTRATIONS, 24 * 60 * 60)
       const username = normalizeUsername(body.username)
       if (!username) throw new HttpError(400, 'username_invalid')
       const password = await assertGoodPassword(body.password, username)
@@ -209,6 +251,12 @@ async function handle(req: Request, body: Record<string, unknown>): Promise<unkn
       const password = await assertGoodPassword(body.newPassword, user.username)
       const { error } = await admin.auth.admin.updateUserById(user.id, { password })
       if (error) throw new HttpError(500, 'server_error')
+      // Alle ANDEREN Geräte abmelden; die aktuelle Session bleibt bestehen.
+      const { error: signOutError } = await admin.auth.admin.signOut(user.jwt, 'others')
+      if (signOutError) {
+        console.error('signOut others failed', signOutError.status)
+        throw new HttpError(500, 'server_error')
+      }
       return { ok: true }
     }
 

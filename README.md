@@ -39,7 +39,8 @@ Browser (statische SPA auf GitHub Pages)
 ## Sicherheit
 
 **Zugang & Auffindbarkeit**
-- Zugangspasswort wird **serverseitig** geprüft (Argon2id-Hash als Secret, Rate-Limit 5 Versuche / 15 Min. pro IP).
+- Zugangspasswort wird **serverseitig** geprüft (Argon2id-Hash als Secret, Rate-Limit 5 Fehlversuche / 15 Min. pro IP
+  und zusätzlich 30 Fehlversuche / 15 Min. global – durch IP-Wechsel nicht umgehbar).
   Ohne gültiges Zugangspasswort ist keine Registrierung möglich; die öffentliche Supabase-Registrierung ist deaktiviert.
 - Hinweis: Eine statische Seite auf GitHub Pages kann ihre eigenen Dateien nicht verstecken. Die App-Hülle enthält
   deshalb keinerlei Daten – alle Inhalte gibt es nur mit Login und passenden Datenbankrechten.
@@ -51,6 +52,8 @@ Browser (statische SPA auf GitHub Pages)
 - Einmaliger **Wiederherstellungscode** (≈100 Bit, Argon2id-gehasht) statt E-Mail-Reset. Kein Admin-Reset,
   damit niemand fremde Konten übernehmen kann.
 - Kurzlebige JWTs mit Refresh-Token-Rotation; Passwortänderung erfordert das aktuelle Passwort.
+- Nach einem Passwort-Reset werden **alle** Sessions beendet, nach einer Passwortänderung alle anderen Geräte
+  abgemeldet. Bereits ausgestellte Access-Tokens laufen spätestens nach `jwt_expiry` (1 Stunde) ab.
 
 **Datenzugriff (OWASP A01)**
 - RLS auf allen Tabellen, Default-Deny. Clients dürfen nur lesen; jede Änderung läuft über
