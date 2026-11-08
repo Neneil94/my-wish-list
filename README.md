@@ -141,10 +141,12 @@ npx supabase@3.0.0 functions serve --env-file supabase/functions/.env.local
 ## GitHub Pages einrichten
 
 1. Repository → **Settings → Pages → Source: GitHub Actions**.
-2. **Settings → Secrets and variables → Actions → Variables** anlegen:
-   - `VITE_SUPABASE_URL` = `https://<PROJECT-REF>.supabase.co`
-   - `VITE_SUPABASE_ANON_KEY` = anon/publishable Key (öffentlich, Schutz erfolgt über RLS)
-3. Push auf `main` → Workflow „CI & Deploy“ baut, testet und veröffentlicht.
+2. **Settings → Environments → `github-pages`** (entsteht mit Schritt 1):
+   - Environment-Variable `VITE_SUPABASE_URL` = `https://<PROJECT-REF>.supabase.co`
+   - Environment-Secret `VITE_SUPABASE_ANON_KEY` = anon/publishable Key
+     (technisch öffentlich, da er im ausgelieferten JavaScript steht; Schutz erfolgt über RLS)
+3. Push auf `main` → Workflow „CI & Deploy“ testet; der Deploy-Job baut mit diesen Werten und veröffentlicht.
+   Fehlt einer der Werte, bricht der Deploy-Job mit einer klaren Meldung ab.
 
 Empfohlen: Branch-Protection für `main` (PR + grüne Checks erforderlich).
 
