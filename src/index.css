@@ -1,0 +1,48 @@
+@import "tailwindcss";
+
+@theme {
+  --font-sans: "Inter Variable", ui-sans-serif, system-ui, sans-serif;
+  --font-display: "Bricolage Grotesque Variable", "Inter Variable", ui-sans-serif, sans-serif;
+
+  --color-ground: #F5F4F0;
+  --color-surface: #FFFFFF;
+  --color-ink: #17181C;
+  --color-ink-2: #3D4048;
+  --color-muted: #5B5E66;
+  --color-line: #E4E2DC;
+  --color-line-2: #CFCBC2;
+  --color-subtle: #EFEDE8;
+
+  --color-pine: #1F5F4A;
+  --color-pine-dark: #174A39;
+  --color-pine-soft: #E3EFE9;
+  --color-pine-line: #C6DDD2;
+
+  --color-apricot: #E07B39;
+  --color-apricot-dark: #D46C29;
+  --color-apricot-soft: #FCEBDD;
+  --color-apricot-line: #F3CBAE;
+  --color-apricot-ink: #8A3E0B;
+  --color-apricot-deep: #5C2A07;
+
+  --color-danger: #B42318;
+  --color-danger-ink: #8A1C12;
+  --color-danger-soft: #FDECEA;
+  --color-danger-line: #F5C2BD;
+}
+
+@layer base {
+  html { -webkit-text-size-adjust: 100%; }
+  body {
+    @apply bg-ground text-ink font-sans antialiased;
+    margin: 0;
+  }
+  :focus-visible {
+    outline: 3px solid var(--color-pine);
+    outline-offset: 2px;
+  }
+  h1, h2, h3 { font-family: var(--font-display); }
+}
+
+/* Frame-Busting-Absicherung: Inhalt erst zeigen, wenn nicht in fremdem Frame. */
+html.framed body { display: none !important; }
