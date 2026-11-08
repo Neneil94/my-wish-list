@@ -9,6 +9,7 @@ import { AuthProvider, useAuth } from './lib/auth'
 import { queryClient } from './lib/queryClient'
 import { router } from './router'
 import { Loading } from './components/ui'
+import { VersionBadge } from './components/VersionBadge'
 
 // Clickjacking-Schutz: GitHub Pages erlaubt keinen frame-ancestors-Header.
 if (window.top !== window.self) {
@@ -26,7 +27,12 @@ function App() {
     if (auth.ready) void router.invalidate()
   }, [auth.ready, auth.session])
   if (!auth.ready) return <Loading />
-  return <RouterProvider router={router} context={{ auth }} />
+  return (
+    <>
+      <RouterProvider router={router} context={{ auth }} />
+      <VersionBadge signedIn={!!auth.session} />
+    </>
+  )
 }
 
 createRoot(document.getElementById('root')!).render(

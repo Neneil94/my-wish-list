@@ -150,6 +150,9 @@ npx supabase@3.0.0 functions serve --env-file supabase/functions/.env.local
    - Environment-Variable `VITE_SUPABASE_URL` = `https://<PROJECT-REF>.supabase.co`
    - Environment-Secret `VITE_SUPABASE_ANON_KEY` = anon/publishable Key
      (technisch öffentlich, da er im ausgelieferten JavaScript steht; Schutz erfolgt über RLS)
+   - Optional für die Seite „Hinweise & Datenschutz“ (`#/legal`): Variablen `VITE_OPERATOR_NAME`,
+     `VITE_OPERATOR_CONTACT` (z. B. E-Mail) und `VITE_DATA_REGION` (z. B. `EU (Frankfurt)`). So stehen keine
+     persönlichen Daten im öffentlichen Repository.
 3. Push auf `main` → Workflow „CI & Deploy“ testet; der Deploy-Job baut mit diesen Werten und veröffentlicht.
    Fehlt einer der Werte, bricht der Deploy-Job mit einer klaren Meldung ab.
 

@@ -79,6 +79,10 @@ jobs:
           # URL als Environment-Variable, anon key als Environment-Secret.
           VITE_SUPABASE_URL: ${{ vars.VITE_SUPABASE_URL }}
           VITE_SUPABASE_ANON_KEY: ${{ secrets.VITE_SUPABASE_ANON_KEY }}
+          # Optional, für die Seite „Hinweise & Datenschutz“.
+          VITE_OPERATOR_NAME: ${{ vars.VITE_OPERATOR_NAME }}
+          VITE_OPERATOR_CONTACT: ${{ vars.VITE_OPERATOR_CONTACT }}
+          VITE_DATA_REGION: ${{ vars.VITE_DATA_REGION }}
         run: |
           if [ -z "$VITE_SUPABASE_URL" ] || [ -z "$VITE_SUPABASE_ANON_KEY" ]; then
             echo "::error::VITE_SUPABASE_URL (Variable) oder VITE_SUPABASE_ANON_KEY (Secret) fehlt im Environment github-pages."
