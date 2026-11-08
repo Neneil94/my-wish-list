@@ -39,7 +39,8 @@ Browser (statische SPA auf GitHub Pages)
 ## Sicherheit
 
 **Zugang & Auffindbarkeit**
-- Zugangspasswort wird **serverseitig** geprüft (Argon2id-Hash als Secret, Rate-Limit 5 Versuche / 15 Min. pro IP).
+- Zugangspasswort wird **serverseitig** geprüft (Argon2id-Hash als Secret, Rate-Limit 5 Fehlversuche / 15 Min. pro IP
+  und zusätzlich 30 Fehlversuche / 15 Min. global – durch IP-Wechsel nicht umgehbar).
   Ohne gültiges Zugangspasswort ist keine Registrierung möglich; die öffentliche Supabase-Registrierung ist deaktiviert.
 - Hinweis: Eine statische Seite auf GitHub Pages kann ihre eigenen Dateien nicht verstecken. Die App-Hülle enthält
   deshalb keinerlei Daten – alle Inhalte gibt es nur mit Login und passenden Datenbankrechten.
@@ -51,6 +52,8 @@ Browser (statische SPA auf GitHub Pages)
 - Einmaliger **Wiederherstellungscode** (≈100 Bit, Argon2id-gehasht) statt E-Mail-Reset. Kein Admin-Reset,
   damit niemand fremde Konten übernehmen kann.
 - Kurzlebige JWTs mit Refresh-Token-Rotation; Passwortänderung erfordert das aktuelle Passwort.
+- Nach einem Passwort-Reset werden **alle** Sessions beendet, nach einer Passwortänderung alle anderen Geräte
+  abgemeldet. Bereits ausgestellte Access-Tokens laufen spätestens nach `jwt_expiry` (1 Stunde) ab.
 
 **Datenzugriff (OWASP A01)**
 - RLS auf allen Tabellen, Default-Deny. Clients dürfen nur lesen; jede Änderung läuft über
@@ -147,6 +150,9 @@ npx supabase@3.0.0 functions serve --env-file supabase/functions/.env.local
    - Environment-Variable `VITE_SUPABASE_URL` = `https://<PROJECT-REF>.supabase.co`
    - Environment-Secret `VITE_SUPABASE_ANON_KEY` = anon/publishable Key
      (technisch öffentlich, da er im ausgelieferten JavaScript steht; Schutz erfolgt über RLS)
+   - Optional für die Seite „Hinweise & Datenschutz“ (`#/legal`): Variablen `VITE_OPERATOR_NAME`,
+     `VITE_OPERATOR_CONTACT` (z. B. E-Mail) und `VITE_DATA_REGION` (z. B. `EU (Frankfurt)`). So stehen keine
+     persönlichen Daten im öffentlichen Repository.
 3. Push auf `main` → Workflow „CI & Deploy“ testet; der Deploy-Job baut mit diesen Werten und veröffentlicht.
    Fehlt einer der Werte, bricht der Deploy-Job mit einer klaren Meldung ab.
 

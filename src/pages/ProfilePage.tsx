@@ -1,6 +1,6 @@
 import { useState, type FormEvent } from 'react'
 import { Link, useNavigate } from '@tanstack/react-router'
-import { Page } from '../components/AppShell'
+import { LegalLink, Page } from '../components/AppShell'
 import { Alert, Avatar, Button, Card, ConfirmDialog, Field, Input } from '../components/ui'
 import { IconChevronRight, IconDevices, IconKey, IconLock, IconLogout, IconTrash } from '../components/icons'
 import { deleteMyAccount, useMyProfile, useUpdateDisplayName } from '../lib/api'
@@ -73,6 +73,8 @@ export function ProfilePage() {
           <IconTrash size={20} /><span className="flex-1">Konto und alle Daten löschen</span>
         </button>
       </Card>
+
+      <LegalLink />
 
       <ConfirmDialog open={confirmDelete} title="Konto endgültig löschen?" confirmLabel="Konto löschen" loading={deleting}
         onClose={() => { setConfirmDelete(false); setDeleteText('') }}

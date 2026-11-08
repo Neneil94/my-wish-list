@@ -23,6 +23,7 @@ import { MyGiftsPage } from './pages/MyGiftsPage'
 import { ProfilePage } from './pages/ProfilePage'
 import { SecurityPage } from './pages/SecurityPage'
 import { NotFoundPage } from './pages/NotFoundPage'
+import { LegalPage } from './pages/LegalPage'
 
 /** Liest die Session direkt (nicht aus React-State), damit Guards nach Login/Logout sofort stimmen. */
 async function hasSession(): Promise<boolean> {
@@ -38,6 +39,9 @@ const rootRoute = createRootRouteWithContext<RouterContext>()({
   component: Outlet,
   notFoundComponent: NotFoundPage,
 })
+
+// ------------------------------------------------ Immer erreichbar (ein- und ausgeloggt)
+const legalRoute = createRoute({ getParentRoute: () => rootRoute, path: '/legal', component: LegalPage })
 
 // ------------------------------------------------ Öffentlich (nicht eingeloggt)
 const publicLayout = createRoute({
@@ -89,6 +93,7 @@ const profileRoute = r('/profile', ProfilePage)
 const securityRoute = r('/profile/security', SecurityPage)
 
 const routeTree = rootRoute.addChildren([
+  legalRoute,
   publicLayout.addChildren([gateRoute, loginRoute, registerRoute, resetRoute]),
   appLayout.addChildren([
     homeRoute, recoveryCodeRoute, newGroupRoute, groupRoute, editGroupRoute, membersRoute, myListRoute,

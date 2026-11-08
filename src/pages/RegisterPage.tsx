@@ -91,6 +91,9 @@ export function RegisterPage() {
           Nach der Registrierung erhältst du einmalig einen <b>Wiederherstellungscode</b>. Bewahre ihn sicher auf –
           ohne E-Mail ist er der einzige Weg zurück ins Konto.
         </p>
+        <p className="m-0 text-[13px] leading-snug text-muted">
+          Welche Daten gespeichert werden, steht in den <Link to="/legal">Hinweisen &amp; zum Datenschutz</Link>.
+        </p>
         <Button type="submit" loading={busy} disabled={!valid}>Konto erstellen</Button>
       </form>
     </PublicPage>

@@ -71,6 +71,7 @@ export function PublicPage({ children }: { children: ReactNode }) {
   return (
     <main id="main" className="mx-auto flex min-h-dvh w-full max-w-md flex-col gap-7 px-6 pt-14 pb-8 md:pt-24">
       {children}
+      <LegalLink className="mt-auto pt-2" />
     </main>
   )
 }
@@ -81,5 +82,14 @@ export function Logo() {
       <span className="flex size-9 items-center justify-center rounded-[10px] bg-pine text-white"><IconGift size={20} /></span>
       <span className="font-display text-xl font-bold">my-wish-list</span>
     </div>
+  )
+}
+
+/** Kleiner Footer-Link für öffentliche Seiten und das Profil. */
+export function LegalLink({ className = '' }: { className?: string }) {
+  return (
+    <p className={`m-0 text-center text-[13px] text-muted ${className}`}>
+      <Link to="/legal" className="text-muted">Hinweise &amp; Datenschutz</Link>
+    </p>
   )
 }
