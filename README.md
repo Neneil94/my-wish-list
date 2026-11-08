@@ -8,8 +8,21 @@ die beschenkte Person etwas davon sieht.
 - **Backend:** Supabase (Free Tier): Postgres mit Row-Level-Security, Supabase Auth, eine Edge Function
 - **Hosting:** GitHub Pages, Build & Deploy über GitHub Actions
 
+## Screenshots
+
+![Wunschliste einer Person am Desktop: Gruppengeschenk mit Fortschritt, vergebene und offene Wünsche](docs/screenshots/desktop-wunschliste.png)
+
+<p align="center">
+  <img src="docs/screenshots/mobile-gruppengeschenk.png" width="300" alt="Gruppengeschenk auf dem Smartphone: Beiträge der Beteiligten und noch offener Betrag">
+  &nbsp;&nbsp;
+  <img src="docs/screenshots/mobile-meine-liste.png" width="300" alt="Eigene Wunschliste auf dem Smartphone mit Hinweis zum Überraschungsschutz">
+</p>
+
+<sub>Mit Demo-Daten (fiktive Personen) aufgenommen.</sub>
+
 ## Inhalt
 
+- [Screenshots](#screenshots)
 - [Architektur](#architektur)
 - [Sicherheit](#sicherheit)
 - [Lokale Entwicklung](#lokale-entwicklung)
