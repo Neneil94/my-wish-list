@@ -1,0 +1,70 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<title>Login</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700&amp;family=Inter:wght@400;500;600&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0}
+a{color:#1F5F4A}a:hover{color:#174A39}
+.h{font-family:'Bricolage Grotesque',sans-serif;margin:0}
+.btn{display:flex;align-items:center;justify-content:center;gap:8px;height:52px;border-radius:12px;font:600 16px Inter,sans-serif;text-decoration:none;border:0;box-sizing:border-box;padding:0 18px}
+.btn-p{background:#1F5F4A;color:#fff}.btn-p:hover{background:#174A39;color:#fff}
+.btn-s{background:#fff;color:#17181C;border:1px solid #CFCBC2}.btn-s:hover{color:#17181C;background:#FBFAF7}
+.field{display:flex;flex-direction:column;gap:6px}
+.lbl{font:600 14px Inter,sans-serif;color:#17181C}
+.inp{height:52px;border:1px solid #CFCBC2;border-radius:12px;padding:0 14px;font:400 16px Inter,sans-serif;color:#17181C;background:#fff;box-sizing:border-box;width:100%}
+.hint{font:400 13px/1.45 Inter,sans-serif;color:#5B5E66;margin:0}
+</style>
+</helmet>
+<div style="width:390px;height:844px;box-sizing:border-box;background:#F5F4F0;font-family:Inter,sans-serif;color:#17181C;display:flex;flex-direction:column;padding:72px 24px 32px;gap:28px">
+<div style="display:flex;align-items:center;gap:10px">
+<div style="width:36px;height:36px;border-radius:10px;background:#1F5F4A;display:flex;align-items:center;justify-content:center">
+<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="8" width="18" height="4" rx="1"></rect><path d="M12 8v13"></path><path d="M19 12v7a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2v-7"></path><path d="M7.5 8a2.5 2.5 0 0 1 0-5C10 3 12 8 12 8s2-5 4.5-5a2.5 2.5 0 0 1 0 5"></path></svg>
+</div>
+<span class="h" style="font-size:20px;font-weight:700">my-wish-list</span>
+</div>
+<div style="display:flex;flex-direction:column;gap:8px">
+<h1 class="h" style="font-size:34px;line-height:1.1;font-weight:700">Willkommen zurück</h1>
+<p class="hint" style="font-size:16px">Melde dich mit deinem Username an.</p>
+</div>
+<div role="alert" style="display:flex;gap:10px;align-items:center;background:#FDECEA;border:1px solid #F5C2BD;border-radius:12px;padding:12px 14px">
+<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#B42318" stroke-width="2" stroke-linecap="round" aria-hidden="true" style="flex-shrink:0"><circle cx="12" cy="12" r="9"></circle><path d="M12 8v5"></path><path d="M12 16.5v.01"></path></svg>
+<span style="font:500 14px Inter,sans-serif;color:#8A1C12">Username oder Passwort ist falsch.</span>
+</div>
+<form style="display:flex;flex-direction:column;gap:18px">
+<div class="field">
+<label class="lbl" for="u">Username</label>
+<input class="inp" id="u" type="text" autocomplete="username" autocapitalize="none" spellcheck="false" value="dominik">
+</div>
+<div class="field">
+<label class="lbl" for="p">Passwort</label>
+<div style="position:relative">
+<input class="inp" id="p" type="password" autocomplete="current-password" value="••••••••••••" style="padding-right:52px">
+<button type="button" aria-label="Passwort anzeigen" style="position:absolute;right:4px;top:4px;width:44px;height:44px;border:0;background:transparent;display:flex;align-items:center;justify-content:center;cursor:pointer">
+<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#5B5E66" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12z"></path><circle cx="12" cy="12" r="3"></circle></svg>
+</button>
+</div>
+</div>
+<a class="btn btn-p" href="Groups.dc.html" style="margin-top:6px">Anmelden</a>
+</form>
+<div style="flex-grow:1"></div>
+<div style="display:flex;flex-direction:column;gap:12px">
+<p class="hint" style="text-align:center">Noch kein Konto?</p>
+<a class="btn btn-s" href="Register.dc.html">Konto erstellen</a>
+<p class="hint" style="text-align:center">Passwort vergessen? <a href="Login.dc.html">Mit Wiederherstellungscode zurücksetzen</a></p>
+</div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":844}}'>
+class Component extends DCLogic {
+renderVals() { return {}; }
+}
+</script>
+</body>
+</html>

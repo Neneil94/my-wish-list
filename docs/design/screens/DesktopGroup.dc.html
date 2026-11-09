@@ -1,0 +1,121 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<title>Anlass Desktop</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700&amp;family=Inter:wght@400;500;600&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0}
+a{color:#1F5F4A}a:hover{color:#174A39}
+.h{font-family:'Bricolage Grotesque',sans-serif;margin:0}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;height:44px;border-radius:12px;font:600 14px Inter,sans-serif;text-decoration:none;border:0;box-sizing:border-box;padding:0 16px;cursor:pointer;white-space:nowrap}
+.btn-p{background:#1F5F4A;color:#fff}.btn-p:hover{color:#fff;background:#174A39}
+.btn-a{background:#E07B39;color:#17181C}.btn-a:hover{color:#17181C;background:#D46C29}
+.btn-s{background:#fff;color:#17181C;border:1px solid #CFCBC2}.btn-s:hover{color:#17181C}
+.hint{font:400 13px/1.45 Inter,sans-serif;color:#5B5E66;margin:0}
+.card{background:#fff;border:1px solid #E4E2DC;border-radius:16px}
+.tn{display:flex;align-items:center;height:44px;padding:0 14px;border-radius:10px;font:600 14px Inter,sans-serif;color:#3D4048;text-decoration:none}
+.tn-on{background:#E3EFE9;color:#174A39}
+.sec{font:600 12px Inter,sans-serif;letter-spacing:.06em;text-transform:uppercase;color:#5B5E66;margin:0}
+.p{display:flex;align-items:center;gap:12px;padding:10px 12px;border-radius:12px;text-decoration:none;color:#17181C;min-height:52px;box-sizing:border-box}
+.p:hover{background:#F5F4F0;color:#17181C}
+.p-on{background:#F5F4F0;outline:2px solid #1F5F4A}
+.av{width:36px;height:36px;border-radius:999px;display:flex;align-items:center;justify-content:center;font:700 12px Inter,sans-serif;color:#fff;flex-shrink:0}
+.pill{display:inline-flex;align-items:center;height:24px;padding:0 9px;border-radius:999px;font:600 12px Inter,sans-serif;white-space:nowrap}
+</style>
+</helmet>
+<div style="min-height:980px;background:#F5F4F0;font-family:Inter,sans-serif;color:#17181C">
+<header style="background:#fff;border-bottom:1px solid #E4E2DC">
+<div style="max-width:1280px;margin:0 auto;padding:12px 32px;display:flex;align-items:center;gap:24px;flex-wrap:wrap;box-sizing:border-box">
+<div style="display:flex;align-items:center;gap:10px">
+<span style="width:34px;height:34px;border-radius:10px;background:#1F5F4A;display:flex;align-items:center;justify-content:center"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="8" width="18" height="4" rx="1"></rect><path d="M12 8v13"></path><path d="M19 12v7a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2v-7"></path><path d="M7.5 8a2.5 2.5 0 0 1 0-5C10 3 12 8 12 8s2-5 4.5-5a2.5 2.5 0 0 1 0 5"></path></svg></span>
+<span class="h" style="font-size:19px;font-weight:700">my-wish-list</span>
+</div>
+<nav aria-label="Hauptnavigation" style="display:flex;gap:4px;flex-wrap:wrap;flex:1">
+<a class="tn tn-on" href="Groups.dc.html" aria-current="page">Anlässe</a>
+<a class="tn" href="MyGifts.dc.html">Meine Geschenke</a>
+</nav>
+<a class="tn" href="Profile.dc.html" style="gap:8px"><span class="av" style="background:#1F5F4A;width:30px;height:30px;font-size:11px">DO</span>Dominik</a>
+</div>
+</header>
+
+<main style="max-width:1280px;margin:0 auto;padding:32px;box-sizing:border-box;display:flex;flex-direction:column;gap:24px">
+<div style="display:flex;justify-content:space-between;align-items:flex-end;gap:16px;flex-wrap:wrap">
+<div style="display:flex;flex-direction:column;gap:6px">
+<a href="Groups.dc.html" style="font:500 14px Inter,sans-serif;text-decoration:none">← Alle Anlässe</a>
+<h1 class="h" style="font-size:40px;font-weight:700;line-height:1.05">Weihnachten 2026</h1>
+<p class="hint" style="font-size:15px">Do., 24.12.2026 · in 46 Tagen · 6 Mitglieder · Wichteln bei Oma, Budget ca. 50 € pro Person.</p>
+</div>
+<div style="display:flex;gap:10px;flex-wrap:wrap">
+<a class="btn btn-s" href="Members.dc.html">Mitglieder &amp; Einladen</a>
+<a class="btn btn-p" href="MyList.dc.html">Meine Wunschliste</a>
+</div>
+</div>
+
+<div style="display:flex;flex-wrap:wrap;gap:24px;align-items:flex-start">
+<aside class="card" style="flex:1 1 280px;padding:12px;display:flex;flex-direction:column;gap:4px;box-sizing:border-box">
+<p class="sec" style="padding:8px 12px">Listen der anderen</p>
+<sc-for list="{{people}}" as="p" hint-placeholder-count="5">
+<a class="{{p.cls}}" href="MemberList.dc.html"><span class="av" style="background:{{p.c}}">{{p.ini}}</span><span style="flex:1;display:flex;flex-direction:column"><span style="font:600 15px Inter,sans-serif">{{p.name}}</span><span class="hint">{{p.stat}}</span></span></a>
+</sc-for>
+</aside>
+
+<section style="flex:999 1 560px;min-width:0;display:flex;flex-direction:column;gap:16px">
+<div style="display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap">
+<h2 class="h" style="font-size:26px;font-weight:700">Lenas Wunschliste</h2>
+<span style="display:inline-flex;gap:8px;align-items:center;background:#E3EFE9;border-radius:999px;padding:6px 12px;font:500 13px Inter,sans-serif;color:#174A39">
+<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3l8 3v6c0 4.5-3.4 8.3-8 9-4.6-.7-8-4.5-8-9V6l8-3z"></path></svg>Lena sieht nicht, was beansprucht wurde.</span>
+</div>
+<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:16px">
+<sc-for list="{{wishes}}" as="w" hint-placeholder-count="5">
+<article class="card" style="padding:18px;display:flex;flex-direction:column;gap:12px">
+<div style="display:flex;justify-content:space-between;gap:10px;align-items:flex-start">
+<a href="WishDetail.dc.html" style="font:600 16px/1.3 Inter,sans-serif;color:#17181C;text-decoration:none">{{w.title}}</a>
+<span class="pill" style="background:{{w.pillBg}};color:{{w.pillFg}}">{{w.status}}</span>
+</div>
+<span class="hint">{{w.meta}}</span>
+<sc-if value="{{w.group}}" hint-placeholder-val="{{ false }}">
+<div style="display:flex;flex-direction:column;gap:6px"><div style="height:8px;border-radius:4px;background:#EFEDE8;overflow:hidden" aria-hidden="true"><div style="height:8px;background:#E07B39;width:80%"></div></div><span class="hint">160 von 199 € · 3 Personen</span></div>
+</sc-if>
+<div style="flex-grow:1"></div>
+<sc-if value="{{w.group}}" hint-placeholder-val="{{ false }}"><a class="btn btn-a" href="Contribute.dc.html">Mitmachen</a></sc-if>
+<sc-if value="{{w.open}}" hint-placeholder-val="{{ false }}"><a class="btn btn-p" href="Contribute.dc.html">Beanspruchen</a></sc-if>
+</article>
+</sc-for>
+</div>
+</section>
+</div>
+</main>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1440,"height":980}}'>
+class Component extends DCLogic {
+  renderVals() {
+    const colors = { group: ['#FCEBDD','#8A3E0B'], open: ['#EFEDE8','#3D4048'], mine: ['#E3EFE9','#174A39'], taken: ['#EFEDE8','#5B5E66'] };
+    const w = [
+      { title: 'Noise-Cancelling-Kopfhörer', meta: '199 € · Top-Wunsch · elektro-markt.de', status: 'Gruppengeschenk', kind: 'group' },
+      { title: 'Roman „Die Mitternachtsbibliothek“', meta: '24 € · buchladen.de', status: 'Offen', kind: 'open' },
+      { title: 'Konzertkarten – gern Jazz', meta: 'ohne Preis', status: 'Offen', kind: 'open' },
+      { title: 'Monstera-Pflanze', meta: '35 €', status: 'Von dir', kind: 'mine' },
+      { title: 'Yogamatte, Kork', meta: '45 €', status: 'Vergeben · Max', kind: 'taken' }
+    ];
+    return {
+      people: [
+        { name: 'Lena', ini: 'LE', c: '#8A3E0B', stat: '6 Wünsche · 3 vergeben', on: true },
+        { name: 'Max', ini: 'MA', c: '#3D4F8A', stat: '5 Wünsche · 2 vergeben' },
+        { name: 'Mama', ini: 'MM', c: '#6B4E8A', stat: '3 Wünsche · 1 vergeben' },
+        { name: 'Papa', ini: 'PA', c: '#1F5F4A', stat: '2 Wünsche · 0 vergeben' },
+        { name: 'Paul', ini: 'PL', c: '#5B5E66', stat: 'Noch keine Wünsche' }
+      ].map(p => ({ ...p, cls: p.on ? 'p p-on' : 'p' })),
+      wishes: w.map(x => ({ ...x, group: x.kind === 'group', open: x.kind === 'open', pillBg: colors[x.kind][0], pillFg: colors[x.kind][1] }))
+    };
+  }
+}
+</script>
+</body>
+</html>
