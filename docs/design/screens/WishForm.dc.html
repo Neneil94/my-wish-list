@@ -1,0 +1,91 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<title>Wunsch anlegen</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700&amp;family=Inter:wght@400;500;600&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0}
+a{color:#1F5F4A}a:hover{color:#174A39}
+.h{font-family:'Bricolage Grotesque',sans-serif;margin:0}
+.btn{display:flex;align-items:center;justify-content:center;gap:8px;height:52px;border-radius:12px;font:600 16px Inter,sans-serif;text-decoration:none;border:0;box-sizing:border-box;padding:0 18px;cursor:pointer}
+.btn-p{background:#1F5F4A;color:#fff}.btn-p:hover{color:#fff;background:#174A39}
+.field{display:flex;flex-direction:column;gap:6px}
+.lbl{font:600 14px Inter,sans-serif;color:#17181C}
+.inp{height:48px;border-radius:12px;padding:0 14px;font:400 16px Inter,sans-serif;color:#17181C;background:#fff;box-sizing:border-box;width:100%}
+.ta{height:80px;padding:12px 14px;resize:none;line-height:1.4;border:1px solid #CFCBC2}
+.hint{font:400 13px/1.45 Inter,sans-serif;color:#5B5E66;margin:0}
+.seg{flex:1;height:44px;border-radius:10px;font:600 14px Inter,sans-serif;cursor:pointer}
+</style>
+</helmet>
+<div style="width:390px;height:844px;box-sizing:border-box;background:#F5F4F0;font-family:Inter,sans-serif;color:#17181C;display:flex;flex-direction:column;padding:16px 20px 24px;gap:18px">
+<div style="display:flex;align-items:center;justify-content:space-between">
+<a href="MyList.dc.html" aria-label="Schließen" style="width:44px;height:44px;margin-left:-10px;display:flex;align-items:center;justify-content:center">
+<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#17181C" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12"></path><path d="M18 6L6 18"></path></svg>
+</a>
+<span style="font:600 15px Inter,sans-serif">Neuer Wunsch</span>
+<span style="width:44px"></span>
+</div>
+<form style="display:flex;flex-direction:column;gap:16px">
+<div class="field">
+<label class="lbl" for="t">Titel</label>
+<input class="inp" id="t" type="text" maxlength="80" value="Wanderschuhe Gr. 44" style="border:1px solid #CFCBC2">
+</div>
+<div class="field">
+<label class="lbl" for="l">Link zum Produkt <span style="font-weight:400;color:#5B5E66">(optional)</span></label>
+<input class="inp" id="l" type="url" inputmode="url" autocapitalize="none" spellcheck="false" value="{{url}}" onChange="{{onUrl}}" aria-invalid="{{invalid}}" style="border:{{urlBorder}}">
+<span style="font:400 13px/1.45 Inter,sans-serif;color:{{urlHintColor}}">{{urlHint}}</span>
+</div>
+<div class="field">
+<label class="lbl" for="d">Beschreibung <span style="font-weight:400;color:#5B5E66">(optional)</span></label>
+<textarea class="inp ta" id="d" maxlength="500">Wasserdicht, eher breiter Leisten. Farbe egal.</textarea>
+</div>
+<div class="field">
+<label class="lbl" for="pr">Preis / Wert</label>
+<div style="position:relative">
+<input class="inp" id="pr" type="text" inputmode="decimal" value="160,00" style="border:1px solid #CFCBC2;padding-right:40px">
+<span style="position:absolute;right:14px;top:14px;font:500 16px Inter,sans-serif;color:#5B5E66" aria-hidden="true">€</span>
+</div>
+<p class="hint">Hilft anderen beim Aufteilen. Leer lassen, wenn unbekannt.</p>
+</div>
+<div class="field">
+<span class="lbl" id="prio">Priorität</span>
+<div role="group" aria-labelledby="prio" style="display:flex;gap:6px;background:#EAE8E2;border-radius:12px;padding:4px">
+<sc-for list="{{prios}}" as="p" hint-placeholder-count="2">
+<button type="button" class="seg" onClick="{{p.pick}}" aria-pressed="{{p.pressed}}" style="border:0;background:{{p.bg}};color:{{p.fg}}">{{p.label}}</button>
+</sc-for>
+</div>
+</div>
+</form>
+<div style="flex-grow:1"></div>
+<a class="btn btn-p" href="MyList.dc.html">Wunsch speichern</a>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":844}}'>
+class Component extends DCLogic {
+  constructor(p){ super(p); this.state = { url: 'https://outdoor-laden.de/p/wanderschuh-gtx', prio: 'normal' }; }
+  renderVals() {
+    const u = (this.state.url || '').trim();
+    const bad = u.length > 0 && !/^https:\/\/[^\s/$.?#][^\s]*$/i.test(u);
+    return {
+      url: this.state.url,
+      onUrl: (e) => this.setState({ url: e.target.value }),
+      invalid: bad ? 'true' : 'false',
+      urlBorder: bad ? '2px solid #B42318' : '1px solid #CFCBC2',
+      urlHintColor: bad ? '#B42318' : '#5B5E66',
+      urlHint: bad ? 'Nur sichere https://-Links sind erlaubt.' : 'Nur https://-Links. Der Link wird nicht vom Server abgerufen.',
+      prios: [['normal','Normal'],['top','Top-Wunsch']].map(([id,label]) => {
+        const on = this.state.prio === id;
+        return { label, pressed: on ? 'true' : 'false', bg: on ? '#fff' : 'transparent', fg: on ? '#17181C' : '#3D4048', pick: () => this.setState({ prio: id }) };
+      })
+    };
+  }
+}
+</script>
+</body>
+</html>

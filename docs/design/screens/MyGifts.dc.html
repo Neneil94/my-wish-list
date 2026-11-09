@@ -1,0 +1,91 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<title>Meine Geschenke</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700&amp;family=Inter:wght@400;500;600&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0}
+a{color:#1F5F4A}a:hover{color:#174A39}
+.h{font-family:'Bricolage Grotesque',sans-serif;margin:0}
+.hint{font:400 13px/1.45 Inter,sans-serif;color:#5B5E66;margin:0}
+.card{background:#fff;border:1px solid #E4E2DC;border-radius:16px}
+.pill{display:inline-flex;align-items:center;height:24px;padding:0 9px;border-radius:999px;font:600 12px Inter,sans-serif;white-space:nowrap}
+.sec{font:600 12px Inter,sans-serif;letter-spacing:.06em;text-transform:uppercase;color:#5B5E66;margin:0}
+.chk{display:flex;align-items:center;gap:8px;min-height:44px;border:0;background:transparent;padding:0;font:500 14px Inter,sans-serif;color:#17181C;cursor:pointer}
+.box{width:22px;height:22px;border-radius:6px;box-sizing:border-box;display:flex;align-items:center;justify-content:center}
+.nav{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;flex:1;min-height:56px;text-decoration:none;font:600 11px Inter,sans-serif;color:#5B5E66}
+.nav-on{color:#1F5F4A}
+</style>
+</helmet>
+<div style="width:390px;height:844px;box-sizing:border-box;background:#F5F4F0;font-family:Inter,sans-serif;color:#17181C;display:flex;flex-direction:column">
+<div style="flex-grow:1;display:flex;flex-direction:column;gap:16px;padding:32px 20px 20px;overflow:hidden">
+<div style="display:flex;flex-direction:column;gap:4px">
+<h1 class="h" style="font-size:30px;font-weight:700">Meine Geschenke</h1>
+<p class="hint">Was du zugesagt hast – nur für dich sichtbar.</p>
+</div>
+<div style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px">
+<div class="card" style="padding:14px;display:flex;flex-direction:column;gap:2px"><span class="h" style="font-size:26px;font-weight:700">3</span><span class="hint">Zusagen offen</span></div>
+<div class="card" style="padding:14px;display:flex;flex-direction:column;gap:2px"><span class="h" style="font-size:26px;font-weight:700">169,99 €</span><span class="hint">dein Anteil gesamt</span></div>
+</div>
+
+<div style="display:flex;gap:10px;align-items:flex-start;background:#FCEBDD;border:1px solid #F3CBAE;border-radius:14px;padding:12px 14px">
+<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#8A3E0B" stroke-width="2" stroke-linecap="round" aria-hidden="true" style="flex-shrink:0;margin-top:1px"><circle cx="12" cy="12" r="9"></circle><path d="M12 8v5"></path><path d="M12 16.5v.01"></path></svg>
+<p style="margin:0;font:400 13px/1.45 Inter,sans-serif;color:#5C2A07"><b>Paul</b> hat „Kochbuch Ottolenghi“ von seiner Liste entfernt. Deine Zusage wurde aufgehoben.</p>
+</div>
+
+<p class="sec">Weihnachten 2026 · in 46 Tagen</p>
+<sc-for list="{{gifts}}" as="g" hint-placeholder-count="3">
+<div class="card" style="padding:14px 16px;display:flex;flex-direction:column;gap:8px">
+<div style="display:flex;justify-content:space-between;gap:10px;align-items:flex-start">
+<div style="display:flex;flex-direction:column;gap:2px;min-width:0">
+<span class="hint">für {{g.for}}</span>
+<a href="WishDetail.dc.html" style="font:600 15px Inter,sans-serif;color:#17181C;text-decoration:none">{{g.title}}</a>
+</div>
+<span class="pill" style="background:{{g.pillBg}};color:{{g.pillFg}}">{{g.type}}</span>
+</div>
+<div style="display:flex;justify-content:space-between;align-items:center">
+<span style="font:500 14px Inter,sans-serif;color:#3D4048">{{g.amount}}</span>
+<button class="chk" type="button" onClick="{{g.toggle}}" aria-pressed="{{g.pressed}}">
+<span class="box" style="background:{{g.boxBg}};border:{{g.boxBorder}}"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12l5 5L20 7"></path></svg></span>Gekauft</button>
+</div>
+</div>
+</sc-for>
+</div>
+<nav aria-label="Hauptnavigation" style="display:flex;background:#fff;border-top:1px solid #E4E2DC;padding:6px 8px 18px">
+<a class="nav" href="Groups.dc.html"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5" width="18" height="16" rx="2"></rect><path d="M3 10h18"></path><path d="M8 3v4"></path><path d="M16 3v4"></path></svg>Anlässe</a>
+<a class="nav nav-on" href="MyGifts.dc.html" aria-current="page"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="8" width="18" height="4" rx="1"></rect><path d="M12 8v13"></path><path d="M19 12v7a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2v-7"></path><path d="M7.5 8a2.5 2.5 0 0 1 0-5C10 3 12 8 12 8s2-5 4.5-5a2.5 2.5 0 0 1 0 5"></path></svg>Meine Geschenke</a>
+<a class="nav" href="Profile.dc.html"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="8" r="4"></circle><path d="M4 21a8 8 0 0 1 16 0"></path></svg>Profil</a>
+</nav>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":844}}'>
+class Component extends DCLogic {
+  constructor(p){ super(p); this.state = { bought: { b: true } }; }
+  renderVals() {
+    const data = [
+      { id: 'a', for: 'Lena', title: 'Noise-Cancelling-Kopfhörer', type: 'Gruppengeschenk', amount: 'Dein Anteil 50 € · 160 / 199 € gedeckt', group: true },
+      { id: 'b', for: 'Max', title: 'LEGO Technic Bagger', type: 'Komplett', amount: '89,99 €', group: false },
+      { id: 'c', for: 'Mama', title: 'Gutschein Thermalbad', type: 'Gruppengeschenk', amount: 'Dein Anteil 30 € · 90 / 120 € gedeckt', group: true }
+    ];
+    const b = this.state.bought;
+    return {
+      gifts: data.map(g => {
+        const on = !!b[g.id];
+        return { ...g,
+          pillBg: g.group ? '#FCEBDD' : '#E3EFE9', pillFg: g.group ? '#8A3E0B' : '#174A39',
+          pressed: on ? 'true' : 'false',
+          boxBg: on ? '#1F5F4A' : '#fff', boxBorder: on ? '0' : '2px solid #A8A49B',
+          toggle: () => this.setState({ bought: { ...b, [g.id]: !on } }) };
+      })
+    };
+  }
+}
+</script>
+</body>
+</html>

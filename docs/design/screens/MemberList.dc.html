@@ -1,0 +1,91 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<title>Lenas Wunschliste</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700&amp;family=Inter:wght@400;500;600&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0}
+a{color:#1F5F4A}a:hover{color:#174A39}
+.h{font-family:'Bricolage Grotesque',sans-serif;margin:0}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:6px;height:44px;border-radius:12px;font:600 14px Inter,sans-serif;text-decoration:none;border:0;box-sizing:border-box;padding:0 14px;cursor:pointer}
+.btn-p{background:#1F5F4A;color:#fff}.btn-p:hover{color:#fff;background:#174A39}
+.btn-a{background:#E07B39;color:#17181C}.btn-a:hover{color:#17181C;background:#D46C29}
+.hint{font:400 13px/1.45 Inter,sans-serif;color:#5B5E66;margin:0}
+.card{background:#fff;border:1px solid #E4E2DC;border-radius:16px}
+.ib{width:44px;height:44px;display:flex;align-items:center;justify-content:center;border-radius:12px;text-decoration:none}
+.pill{display:inline-flex;align-items:center;gap:4px;height:24px;padding:0 9px;border-radius:999px;font:600 12px Inter,sans-serif;white-space:nowrap}
+.chip{height:36px;padding:0 14px;border-radius:999px;font:600 13px Inter,sans-serif;cursor:pointer}
+</style>
+</helmet>
+<div style="width:390px;height:844px;box-sizing:border-box;background:#F5F4F0;font-family:Inter,sans-serif;color:#17181C;display:flex;flex-direction:column;padding:12px 20px 20px;gap:14px;overflow:hidden">
+<div style="display:flex;align-items:center;gap:8px;margin-left:-10px">
+<a class="ib" href="GroupDetail.dc.html" aria-label="Zurück zum Anlass"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#17181C" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 18l-6-6 6-6"></path></svg></a>
+<span style="width:40px;height:40px;border-radius:999px;background:#8A3E0B;color:#fff;display:flex;align-items:center;justify-content:center;font:700 13px Inter,sans-serif">LE</span>
+<div style="display:flex;flex-direction:column">
+<h1 class="h" style="font-size:22px;font-weight:700">Lenas Wunschliste</h1>
+<span class="hint">Weihnachten 2026 · 6 Wünsche</span>
+</div>
+</div>
+<div style="display:flex;gap:8px;align-items:center;background:#E3EFE9;border-radius:12px;padding:10px 12px">
+<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#174A39" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex-shrink:0"><path d="M12 3l8 3v6c0 4.5-3.4 8.3-8 9-4.6-.7-8-4.5-8-9V6l8-3z"></path></svg>
+<span style="font:500 13px Inter,sans-serif;color:#174A39">Lena sieht nicht, was beansprucht wurde.</span>
+</div>
+<div role="group" aria-label="Filter" style="display:flex;gap:8px">
+<sc-for list="{{filters}}" as="f" hint-placeholder-count="3">
+<button type="button" class="chip" onClick="{{f.pick}}" aria-pressed="{{f.pressed}}" style="border:{{f.border}};background:{{f.bg}};color:{{f.fg}}">{{f.label}}</button>
+</sc-for>
+</div>
+<sc-for list="{{wishes}}" as="w" hint-placeholder-count="5">
+<div class="card" style="padding:14px 16px;display:flex;flex-direction:column;gap:10px;opacity:{{w.op}}">
+<div style="display:flex;justify-content:space-between;gap:10px;align-items:flex-start">
+<div style="display:flex;flex-direction:column;gap:3px;min-width:0">
+<a href="WishDetail.dc.html" style="font:600 15px Inter,sans-serif;color:#17181C;text-decoration:none">{{w.title}}</a>
+<span class="hint">{{w.meta}}</span>
+</div>
+<span class="pill" style="background:{{w.pillBg}};color:{{w.pillFg}}">{{w.status}}</span>
+</div>
+<sc-if value="{{w.group}}" hint-placeholder-val="{{ false }}">
+<div style="display:flex;flex-direction:column;gap:6px">
+<div style="height:8px;border-radius:4px;background:#EFEDE8;overflow:hidden" aria-hidden="true"><div style="height:8px;background:#E07B39;width:{{w.pct}}"></div></div>
+<div style="display:flex;justify-content:space-between;align-items:center"><span class="hint">{{w.progress}}</span><a class="btn btn-a" href="Contribute.dc.html" style="height:36px;font-size:13px">Mitmachen</a></div>
+</div>
+</sc-if>
+<sc-if value="{{w.open}}" hint-placeholder-val="{{ false }}">
+<div style="display:flex;justify-content:flex-end"><a class="btn btn-p" href="Contribute.dc.html" style="height:36px;font-size:13px">Beanspruchen</a></div>
+</sc-if>
+</div>
+</sc-for>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":844}}'>
+class Component extends DCLogic {
+  constructor(p){ super(p); this.state = { f: 'all' }; }
+  renderVals() {
+    const all = [
+      { title: 'Noise-Cancelling-Kopfhörer', meta: '199 € · Top-Wunsch · elektro-markt.de', status: 'Gruppengeschenk', kind: 'group', pct: '80%', progress: '160 von 199 € · 3 Personen' },
+      { title: 'Roman „Die Mitternachtsbibliothek“', meta: '24 € · buchladen.de', status: 'Offen', kind: 'open' },
+      { title: 'Konzertkarten – gern Jazz', meta: 'ohne Preis', status: 'Offen', kind: 'open' },
+      { title: 'Monstera-Pflanze', meta: '35 €', status: 'Von dir', kind: 'mine' },
+      { title: 'Yogamatte, Kork', meta: '45 €', status: 'Vergeben · Max', kind: 'taken' }
+    ];
+    const f = this.state.f;
+    const shown = all.filter(w => f === 'all' || (f === 'open' ? (w.kind === 'open' || w.kind === 'group') : (w.kind === 'mine' || w.kind === 'taken')));
+    const colors = { group: ['#FCEBDD','#8A3E0B'], open: ['#EFEDE8','#3D4048'], mine: ['#E3EFE9','#174A39'], taken: ['#EFEDE8','#5B5E66'] };
+    return {
+      filters: [['all','Alle'],['open','Offen'],['done','Vergeben']].map(([id,label]) => {
+        const on = f === id;
+        return { label, pressed: on ? 'true' : 'false', border: on ? '1px solid #17181C' : '1px solid #CFCBC2', bg: on ? '#17181C' : '#fff', fg: on ? '#fff' : '#17181C', pick: () => this.setState({ f: id }) };
+      }),
+      wishes: shown.map(w => ({ ...w, group: w.kind === 'group', open: w.kind === 'open', op: '1', pillBg: colors[w.kind][0], pillFg: colors[w.kind][1] }))
+    };
+  }
+}
+</script>
+</body>
+</html>

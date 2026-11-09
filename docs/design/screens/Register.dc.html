@@ -1,0 +1,96 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<title>Registrierung</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700&amp;family=Inter:wght@400;500;600&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0}
+a{color:#1F5F4A}a:hover{color:#174A39}
+.h{font-family:'Bricolage Grotesque',sans-serif;margin:0}
+.btn{display:flex;align-items:center;justify-content:center;gap:8px;height:52px;border-radius:12px;font:600 16px Inter,sans-serif;text-decoration:none;border:0;box-sizing:border-box;padding:0 18px}
+.btn-p{background:#1F5F4A;color:#fff}.btn-p:hover{background:#174A39;color:#fff}
+.field{display:flex;flex-direction:column;gap:6px}
+.lbl{font:600 14px Inter,sans-serif;color:#17181C}
+.inp{height:52px;border:1px solid #CFCBC2;border-radius:12px;padding:0 14px;font:400 16px Inter,sans-serif;color:#17181C;background:#fff;box-sizing:border-box;width:100%}
+.hint{font:400 13px/1.45 Inter,sans-serif;color:#5B5E66;margin:0}
+.ck{display:flex;align-items:center;gap:8px;font:400 13px Inter,sans-serif;color:#3D4048}
+.dot{width:18px;height:18px;border-radius:999px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+</style>
+</helmet>
+<div style="width:390px;height:844px;box-sizing:border-box;background:#F5F4F0;font-family:Inter,sans-serif;color:#17181C;display:flex;flex-direction:column;padding:28px 24px 28px;gap:22px">
+<a href="Login.dc.html" aria-label="Zurück zum Login" style="width:44px;height:44px;margin-left:-10px;display:flex;align-items:center;justify-content:center;border-radius:12px">
+<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#17181C" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 18l-6-6 6-6"></path></svg>
+</a>
+<div style="display:flex;flex-direction:column;gap:8px">
+<h1 class="h" style="font-size:32px;line-height:1.1;font-weight:700">Konto erstellen</h1>
+<p class="hint" style="font-size:15px">Keine E-Mail nötig – nur Username und ein starkes Passwort.</p>
+</div>
+<form style="display:flex;flex-direction:column;gap:16px">
+<div class="field">
+<label class="lbl" for="u">Username</label>
+<input class="inp" id="u" type="text" autocomplete="username" autocapitalize="none" spellcheck="false" value="dominik">
+<p class="hint">3–24 Zeichen: a–z, 0–9, Punkt, Unterstrich. Darüber laden dich andere ein.</p>
+</div>
+<div class="field">
+<label class="lbl" for="p">Passwort</label>
+<input class="inp" id="p" type="password" autocomplete="new-password" value="{{pw}}" onChange="{{onPw}}" placeholder="Mindestens 12 Zeichen">
+<div style="display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:4px;margin-top:4px" aria-hidden="true">
+<sc-for list="{{bars}}" as="b" hint-placeholder-count="4"><div style="height:4px;border-radius:2px;background:{{b.c}}"></div></sc-for>
+</div>
+<span style="font:600 12px Inter,sans-serif;color:{{strengthColor}}">{{strengthLabel}}</span>
+<div style="display:flex;flex-direction:column;gap:6px;margin-top:2px">
+<sc-for list="{{checks}}" as="c" hint-placeholder-count="4">
+<div class="ck"><span class="dot" style="background:{{c.bg}}"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="{{c.fg}}" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12l5 5L20 7"></path></svg></span>{{c.label}}</div>
+</sc-for>
+</div>
+</div>
+<div class="field">
+<label class="lbl" for="p2">Passwort wiederholen</label>
+<input class="inp" id="p2" type="password" autocomplete="new-password">
+</div>
+</form>
+<div style="flex-grow:1"></div>
+<div style="display:flex;flex-direction:column;gap:10px">
+<p class="hint">Nach der Registrierung erhältst du einmalig einen <b>Wiederherstellungscode</b>. Bewahre ihn sicher auf – ohne E-Mail ist er der einzige Weg zurück ins Konto.</p>
+<a class="btn btn-p" href="Groups.dc.html">Konto erstellen</a>
+</div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":844}}'>
+class Component extends DCLogic {
+  constructor(p){ super(p); this.state = { pw: 'Tannenbaum-2026' }; }
+  renderVals() {
+    const pw = this.state.pw || '';
+    const len = pw.length >= 12;
+    const notUser = pw.length > 0 && pw.toLowerCase().indexOf('dominik') === -1;
+    const mix = /[a-zA-Z]/.test(pw) && /[^a-zA-Z]/.test(pw);
+    const leak = pw.length >= 8 && ['passwort1234','password1234','123456789012'].indexOf(pw.toLowerCase()) === -1;
+    const ok = [len, notUser, mix, leak];
+    const score = ok.filter(Boolean).length;
+    const cols = ['#B42318','#E07B39','#C9A227','#1F5F4A'];
+    const on = score === 0 ? '#E4E2DC' : cols[score - 1];
+    const mk = (label, v) => ({ label, bg: v ? '#1F5F4A' : '#E4E2DC', fg: v ? '#fff' : '#E4E2DC' });
+    return {
+      pw,
+      onPw: (e) => this.setState({ pw: e.target.value }),
+      bars: [0,1,2,3].map(i => ({ c: i < score ? on : '#E4E2DC' })),
+      strengthLabel: ['Zu schwach','Schwach','Mittel','Gut','Stark'][score],
+      strengthColor: score >= 4 ? '#1F5F4A' : score >= 2 ? '#8A5A00' : '#B42318',
+      checks: [
+        mk('Mindestens 12 Zeichen', len),
+        mk('Enthält nicht den Username', notUser),
+        mk('Buchstaben und Zahlen/Sonderzeichen', mix),
+        mk('Nicht in bekannten Datenlecks', leak)
+      ]
+    };
+  }
+}
+</script>
+</body>
+</html>

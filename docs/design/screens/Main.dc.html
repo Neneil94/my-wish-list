@@ -1,0 +1,127 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<title>Konzept my-wish-list</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700&amp;family=Inter:wght@400;500;600;700&amp;family=JetBrains+Mono:wght@400;500&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0}
+a{color:#1F5F4A}a:hover{color:#174A39}
+.h{font-family:'Bricolage Grotesque',sans-serif;margin:0}
+.card{background:#fff;border:1px solid #E4E2DC;border-radius:20px;padding:28px;box-sizing:border-box;display:flex;flex-direction:column;gap:14px}
+.k{font:600 12px Inter,sans-serif;letter-spacing:.08em;text-transform:uppercase;color:#1F5F4A;margin:0}
+.p{font:400 15px/1.55 Inter,sans-serif;color:#3D4048;margin:0}
+.li{font:400 14px/1.5 Inter,sans-serif;color:#3D4048;margin:0;padding-left:18px}
+.li li{margin-bottom:6px}
+.mono{font:400 13px/1.6 'JetBrains Mono',monospace;color:#17181C}
+.tag{display:inline-flex;align-items:center;height:28px;padding:0 12px;border-radius:999px;background:#E3EFE9;color:#174A39;font:600 13px Inter,sans-serif}
+.row{display:flex;gap:10px;align-items:flex-start}
+.ow{font:700 13px 'JetBrains Mono',monospace;color:#1F5F4A;min-width:44px}
+.sw{width:100%;height:64px;border-radius:12px}
+.swl{font:500 12px Inter,sans-serif;color:#3D4048}
+</style>
+</helmet>
+<div style="width:1440px;height:1900px;box-sizing:border-box;background:#F5F4F0;padding:72px 80px;display:flex;flex-direction:column;gap:40px;font-family:Inter,sans-serif;color:#17181C">
+
+<div style="display:flex;justify-content:space-between;align-items:flex-end;gap:40px">
+<div style="display:flex;flex-direction:column;gap:12px">
+<p class="k">my-wish-list · Design zur Abnahme · v1</p>
+<h1 class="h" style="font-size:64px;line-height:1.02;font-weight:700;letter-spacing:-0.02em">Wunschlisten für Familie &amp; Freunde –<br>privat, sicher, ohne Spoiler.</h1>
+</div>
+<div style="display:flex;gap:8px;flex-wrap:wrap;justify-content:flex-end;max-width:420px">
+<span class="tag">React 19 + TypeScript</span><span class="tag">Vite</span><span class="tag">Tailwind CSS v4</span><span class="tag">TanStack Router/Query</span><span class="tag">Zod</span><span class="tag">Supabase (Postgres + Auth + RLS)</span><span class="tag">GitHub Pages + Actions</span>
+</div>
+</div>
+
+<div style="display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:24px">
+<div class="card">
+<p class="k">Architektur</p>
+<h2 class="h" style="font-size:26px">Statisches Frontend, gesichertes Backend</h2>
+<p class="p">GitHub Pages liefert nur statische Dateien. Alle Daten, Logins und Berechtigungen liegen daher in <b>Supabase (Free Tier)</b>: Postgres mit Row-Level-Security, Supabase Auth und eine Edge Function für das Zugangspasswort.</p>
+<div class="mono" style="background:#F5F4F0;border-radius:12px;padding:14px 16px">Browser (SPA, Hash-Routing)<br>  │ HTTPS · JWT<br>  ▼<br>Supabase REST/RPC ──► Postgres + RLS<br>Edge Function ──► Zugangscode-Prüfung</div>
+<p class="p">Im Client steht nur der öffentliche <i>anon key</i> – er gewährt ohne gültige Session und passende RLS-Policy keinerlei Datenzugriff.</p>
+</div>
+
+<div class="card">
+<p class="k">Privat &amp; unauffindbar</p>
+<h2 class="h" style="font-size:26px">Zugangspasswort + kein Index</h2>
+<ul class="li">
+<li><b>Zugangspasswort</b> wird serverseitig in einer Edge Function geprüft (Hash als Secret, Rate-Limit). Ohne gültigen Code ist keine Registrierung möglich.</li>
+<li>Ehrlich: Eine Passwortseite auf GitHub Pages kann die statischen Dateien selbst nicht verbergen. Darum ist die App-Hülle bewusst inhaltsleer – <b>alle Daten</b> gibt es nur mit Login + RLS.</li>
+<li><span class="mono">&lt;meta name="robots" content="noindex,nofollow"&gt;</span>, <span class="mono">robots.txt: Disallow /</span>, keine Sitemap, keine Open-Graph-Vorschau.</li>
+<li>Hinweis: Pages im Free-Plan erfordert ein öffentliches Repo. Der Code enthält keine Geheimnisse.</li>
+</ul>
+</div>
+
+<div class="card">
+<p class="k">Login &amp; Konten</p>
+<h2 class="h" style="font-size:26px">Username + Passwort, ohne E-Mail</h2>
+<ul class="li">
+<li>Supabase Auth mit interner Pseudo-Adresse <span class="mono">&lt;username&gt;@users.invalid</span>, E-Mail-Bestätigung aus. Der Nutzer sieht nur seinen Username.</li>
+<li>Username: 3–24 Zeichen, <span class="mono">a–z 0–9 _ .</span>, eindeutig (case-insensitive).</li>
+<li>Passwort: mind. 12 Zeichen, nicht = Username, Abgleich gegen geleakte Passwörter (HIBP, k-Anonymität), Stärkeanzeige.</li>
+<li>Kurzlebige JWTs, Refresh-Token-Rotation, Sperre/Backoff nach Fehlversuchen, einheitliche Fehlermeldung „Username oder Passwort falsch“.</li>
+</ul>
+</div>
+</div>
+
+<div style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:24px">
+<div class="card">
+<p class="k">OWASP Top 10 (2021/2025) – Gegenmaßnahmen</p>
+<div class="row"><span class="ow">A01</span><p class="p"><b>Zugriffskontrolle:</b> RLS auf jeder Tabelle, Default-Deny. Nur Gruppenmitglieder lesen Gruppe/Wünsche; Claims sind für den Wunsch-Owner per Policy unsichtbar.</p></div>
+<div class="row"><span class="ow">A02</span><p class="p"><b>Kryptografie:</b> nur HTTPS (Pages-Enforce), Passwörter bcrypt in Supabase, Zugangscode als Argon2id-Hash.</p></div>
+<div class="row"><span class="ow">A03</span><p class="p"><b>Injection/XSS:</b> parametrisierte Queries, Zod-Validierung client- &amp; DB-seitig (CHECK-Constraints), React-Escaping, kein <span class="mono">dangerouslySetInnerHTML</span>, Links nur <span class="mono">https:</span> mit <span class="mono">rel="noopener noreferrer nofollow"</span>.</p></div>
+<div class="row"><span class="ow">A04</span><p class="p"><b>Unsicheres Design:</b> Threat-Model, Überraschungsschutz in der DB statt in der UI, Einladung erfordert Annahme.</p></div>
+<div class="row"><span class="ow">A05</span><p class="p"><b>Fehlkonfiguration:</b> strikte CSP per Meta-Tag (nur self + Supabase-Host), keine Inline-Skripte, Referrer-Policy no-referrer, Frame-Busting (Pages erlaubt keine eigenen Header).</p></div>
+</div>
+<div class="card">
+<p class="k">&nbsp;</p>
+<div class="row"><span class="ow">A06</span><p class="p"><b>Komponenten:</b> Dependabot, <span class="mono">npm audit</span> in CI, Lockfile, minimale Abhängigkeiten.</p></div>
+<div class="row"><span class="ow">A07</span><p class="p"><b>Authentifizierung:</b> Mindestanforderungen, Rate-Limits, keine Username-Enumeration beim Login; Usersuche fürs Einladen nur eingeloggt, nur exakter Treffer, gedrosselt.</p></div>
+<div class="row"><span class="ow">A08</span><p class="p"><b>Integrität:</b> GitHub Actions mit per SHA gepinnten Actions, Deploy nur von <span class="mono">main</span>, Branch-Protection, SRI für alles Externe.</p></div>
+<div class="row"><span class="ow">A09</span><p class="p"><b>Logging:</b> Supabase Auth-Audit-Log, fehlgeschlagene Zugangscode-Versuche werden protokolliert.</p></div>
+<div class="row"><span class="ow">A10</span><p class="p"><b>SSRF:</b> keine serverseitige Link-Vorschau; Produkt-Links werden nie vom Server abgerufen.</p></div>
+<div class="row"><span class="ow">+</span><p class="p"><b>Darüber hinaus:</b> CSRF entfällt (Bearer-Token statt Cookies), Clickjacking-Schutz, Konto löschen inkl. aller Daten (DSGVO), Beträge als Integer-Cent.</p></div>
+</div>
+</div>
+
+<div style="display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:24px">
+<div class="card" style="grid-column:span 2">
+<p class="k">Datenmodell (Postgres)</p>
+<div class="mono" style="display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:18px">
+<div><b>profiles</b><br>id (= auth.uid)<br>username unique<br>display_name<br>created_at</div>
+<div><b>groups</b> (Anlass)<br>id, name<br>occasion_date<br>description<br>created_by</div>
+<div><b>group_members</b><br>group_id, user_id<br>role: admin | member<br>status: invited | active<br>invited_by</div>
+<div><b>wishes</b><br>id, group_id, owner_id<br>title, description<br>url (https only)<br>price_cents, priority</div>
+<div><b>claims</b> (unsichtbar für Owner)<br>id, wish_id, user_id<br>type: full | share<br>amount_cents, note</div>
+<div><b>RLS-Kernregel</b><br>claims SELECT wenn<br>is_member(group) AND<br>wish.owner_id &lt;&gt; auth.uid()</div>
+</div>
+</div>
+<div class="card">
+<p class="k">Design-Tokens</p>
+<div style="display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px">
+<div><div class="sw" style="background:#1F5F4A"></div><div class="swl">Tanne #1F5F4A</div></div>
+<div><div class="sw" style="background:#E07B39"></div><div class="swl">Aprikose #E07B39</div></div>
+<div><div class="sw" style="background:#F5F4F0;border:1px solid #E4E2DC;box-sizing:border-box"></div><div class="swl">Grund #F5F4F0</div></div>
+<div><div class="sw" style="background:#17181C"></div><div class="swl">Tinte #17181C</div></div>
+<div><div class="sw" style="background:#E3EFE9"></div><div class="swl">Tanne hell #E3EFE9</div></div>
+<div><div class="sw" style="background:#B42318"></div><div class="swl">Fehler #B42318</div></div>
+</div>
+<p class="p"><b style="font-family:'Bricolage Grotesque',sans-serif">Bricolage Grotesque</b> für Überschriften, <b>Inter</b> für Text. Radius 12/16/20 px, Touch-Ziele ≥ 44 px, Kontrast ≥ 4.5:1.</p>
+</div>
+</div>
+
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1440,"height":1900}}'>
+class Component extends DCLogic {
+renderVals() { return {}; }
+}
+</script>
+</body>
+</html>

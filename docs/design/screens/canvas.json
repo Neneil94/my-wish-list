@@ -1,0 +1,30 @@
+{"v":3,"createdOnFiles":{"v":1,"at":"2026-11-08T16:45:00Z"},"title":"my-wish-list – App-Design","launch":{"view":"canvas"},"pages":[],
+"boards":{
+"Main.dc.html":{"x":0,"y":0,"w":1440,"h":1900,"title":"Konzept: Architektur, Sicherheit & Design-Tokens"},
+"Gate.dc.html":{"x":0,"y":2380,"w":390,"h":844,"title":"01 Zugangspasswort","is_interactive":true},
+"Login.dc.html":{"x":470,"y":2380,"w":390,"h":844,"title":"02 Login","is_interactive":true},
+"Register.dc.html":{"x":940,"y":2380,"w":390,"h":844,"title":"03 Registrierung","is_interactive":true},
+"Profile.dc.html":{"x":1410,"y":2380,"w":390,"h":844,"title":"04 Profil","is_interactive":true},
+"Groups.dc.html":{"x":0,"y":3700,"w":390,"h":844,"title":"05 Anlässe (Übersicht)","is_interactive":true},
+"NewGroup.dc.html":{"x":470,"y":3700,"w":390,"h":844,"title":"06 Anlass erstellen","is_interactive":true},
+"MyGifts.dc.html":{"x":940,"y":3700,"w":390,"h":844,"title":"07 Meine Geschenke","is_interactive":true},
+"GroupDetail.dc.html":{"x":0,"y":5020,"w":390,"h":844,"title":"08 Anlass – Detail","is_interactive":true},
+"Members.dc.html":{"x":470,"y":5020,"w":390,"h":844,"title":"09 Mitglieder & Einladen","is_interactive":true},
+"MyList.dc.html":{"x":940,"y":5020,"w":390,"h":844,"title":"10 Meine Wunschliste","is_interactive":true},
+"WishForm.dc.html":{"x":1410,"y":5020,"w":390,"h":844,"title":"11 Wunsch anlegen","is_interactive":true},
+"MemberList.dc.html":{"x":0,"y":6340,"w":390,"h":844,"title":"12 Liste von Lena","is_interactive":true},
+"WishDetail.dc.html":{"x":470,"y":6340,"w":390,"h":844,"title":"13 Wunsch – Gruppengeschenk","is_interactive":true},
+"Contribute.dc.html":{"x":940,"y":6340,"w":390,"h":844,"title":"14 Beanspruchen / Beitrag","is_interactive":true},
+"DesktopGroup.dc.html":{"x":0,"y":7660,"w":1440,"h":980,"title":"15 Desktop – Anlass-Detail","expand":"fill","is_interactive":true}
+},
+"order":["Main.dc.html","Gate.dc.html","Login.dc.html","Register.dc.html","Profile.dc.html","Groups.dc.html","NewGroup.dc.html","MyGifts.dc.html","GroupDetail.dc.html","Members.dc.html","MyList.dc.html","WishForm.dc.html","MemberList.dc.html","WishDetail.dc.html","Contribute.dc.html","DesktopGroup.dc.html"],
+"notes":{
+"t1":{"x":0,"y":2120,"text":"Zugang & Konto","kind":"title1","maxW":1800},
+"t2":{"x":0,"y":3440,"text":"Anlässe & meine Geschenke","kind":"title1","maxW":1800},
+"t3":{"x":0,"y":4760,"text":"Im Anlass: Mitglieder & eigene Wünsche","kind":"title1","maxW":1800},
+"t4":{"x":0,"y":6080,"text":"Schenken: Beanspruchen & Gruppengeschenk","kind":"title1","maxW":1800},
+"t5":{"x":0,"y":7400,"text":"Responsive: Desktop","kind":"title1","maxW":1440},
+"s1":{"x":1410,"y":3700,"w":360,"text":"Überraschungsschutz: Auf der eigenen Wunschliste (10) sieht man NIE, ob/was/wer beansprucht hat. Das erzwingt die Datenbank per Row-Level-Security – nicht nur die UI.","fill":"orange"},
+"s2":{"x":1410,"y":6340,"w":360,"text":"Gruppengeschenk: Wer zuerst beansprucht, wählt „Komplett schenken“ oder „Beitrag (x €)“. Bei Beitrag bleibt der Wunsch offen, bis die Summe den Preis erreicht.","fill":"teal"}
+},
+"designSystems":[]}
