@@ -11,20 +11,25 @@
 "GroupDetail.dc.html":{"x":0,"y":5020,"w":390,"h":844,"title":"08 Anlass – Detail","is_interactive":true},
 "Members.dc.html":{"x":470,"y":5020,"w":390,"h":844,"title":"09 Mitglieder & Einladen","is_interactive":true},
 "MyList.dc.html":{"x":940,"y":5020,"w":390,"h":844,"title":"10 Meine Wunschliste","is_interactive":true},
-"WishForm.dc.html":{"x":1410,"y":5020,"w":390,"h":844,"title":"11 Wunsch anlegen","is_interactive":true},
-"MemberList.dc.html":{"x":0,"y":6340,"w":390,"h":844,"title":"12 Liste von Lena","is_interactive":true},
-"WishDetail.dc.html":{"x":470,"y":6340,"w":390,"h":844,"title":"13 Wunsch – Gruppengeschenk","is_interactive":true},
-"Contribute.dc.html":{"x":940,"y":6340,"w":390,"h":844,"title":"14 Beanspruchen / Beitrag","is_interactive":true},
-"DesktopGroup.dc.html":{"x":0,"y":7660,"w":1440,"h":980,"title":"15 Desktop – Anlass-Detail","expand":"fill","is_interactive":true}
+"WishForm.dc.html":{"x":1410,"y":5020,"w":390,"h":1200,"title":"11 Wunsch anlegen","is_interactive":true},
+"MemberList.dc.html":{"x":0,"y":6640,"w":390,"h":844,"title":"12 Liste von Lena","is_interactive":true},
+"WishDetail.dc.html":{"x":470,"y":6640,"w":390,"h":1080,"title":"13 Wunsch – Gruppengeschenk","is_interactive":true},
+"Contribute.dc.html":{"x":940,"y":6640,"w":390,"h":844,"title":"14 Beanspruchen / Beitrag","is_interactive":true},
+"DesktopGroup.dc.html":{"x":0,"y":8220,"w":1440,"h":980,"title":"15 Desktop – Anlass-Detail","expand":"fill","is_interactive":true},
+"WishImage.dc.html":{"x":0,"y":9700,"w":1440,"h":2140,"title":"Erweiterung: Bild zum Wunsch – Konzept"},
+"WishFormEdit.dc.html":{"x":1520,"y":9700,"w":390,"h":1200,"title":"11b Wunsch bearbeiten – mit Bild","is_interactive":true},
+"WishImageView.dc.html":{"x":1990,"y":9700,"w":390,"h":844,"title":"13b Wunschbild – Vollbild","is_interactive":true}
 },
-"order":["Main.dc.html","Gate.dc.html","Login.dc.html","Register.dc.html","Profile.dc.html","Groups.dc.html","NewGroup.dc.html","MyGifts.dc.html","GroupDetail.dc.html","Members.dc.html","MyList.dc.html","WishForm.dc.html","MemberList.dc.html","WishDetail.dc.html","Contribute.dc.html","DesktopGroup.dc.html"],
+"order":["Main.dc.html","Gate.dc.html","Login.dc.html","Register.dc.html","Profile.dc.html","Groups.dc.html","NewGroup.dc.html","MyGifts.dc.html","GroupDetail.dc.html","Members.dc.html","MyList.dc.html","WishForm.dc.html","MemberList.dc.html","WishDetail.dc.html","Contribute.dc.html","DesktopGroup.dc.html","WishImage.dc.html","WishFormEdit.dc.html","WishImageView.dc.html"],
 "notes":{
 "t1":{"x":0,"y":2120,"text":"Zugang & Konto","kind":"title1","maxW":1800},
 "t2":{"x":0,"y":3440,"text":"Anlässe & meine Geschenke","kind":"title1","maxW":1800},
 "t3":{"x":0,"y":4760,"text":"Im Anlass: Mitglieder & eigene Wünsche","kind":"title1","maxW":1800},
-"t4":{"x":0,"y":6080,"text":"Schenken: Beanspruchen & Gruppengeschenk","kind":"title1","maxW":1800},
-"t5":{"x":0,"y":7400,"text":"Responsive: Desktop","kind":"title1","maxW":1440},
+"t4":{"x":0,"y":6380,"text":"Schenken: Beanspruchen & Gruppengeschenk","kind":"title1","maxW":1800},
+"t5":{"x":0,"y":7960,"text":"Responsive: Desktop","kind":"title1","maxW":1440},
+"t6":{"x":0,"y":9440,"text":"Erweiterung: Bild zum Wunsch","kind":"title1","maxW":2380},
 "s1":{"x":1410,"y":3700,"w":360,"text":"Überraschungsschutz: Auf der eigenen Wunschliste (10) sieht man NIE, ob/was/wer beansprucht hat. Das erzwingt die Datenbank per Row-Level-Security – nicht nur die UI.","fill":"orange"},
-"s2":{"x":1410,"y":6340,"w":360,"text":"Gruppengeschenk: Wer zuerst beansprucht, wählt „Komplett schenken“ oder „Beitrag (x €)“. Bei Beitrag bleibt der Wunsch offen, bis die Summe den Preis erreicht.","fill":"teal"}
+"s2":{"x":1410,"y":6640,"w":360,"text":"Gruppengeschenk: Wer zuerst beansprucht, wählt „Komplett schenken“ oder „Beitrag (x €)“. Bei Beitrag bleibt der Wunsch offen, bis die Summe den Preis erreicht.","fill":"teal"},
+"s3":{"x":1990,"y":10620,"w":360,"text":"Bild zum Wunsch: Geändert sind 07, 10, 11, 12, 13 und 15. Neu sind 11b und 13b. Bilder sieht nur, wer Mitglied des Anlasses ist. Der Überraschungsschutz ist nicht betroffen, weil das Bild immer von der Person stammt, die sich etwas wünscht.","fill":"teal"}
 },
 "designSystems":[]}

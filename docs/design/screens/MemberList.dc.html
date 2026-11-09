@@ -21,6 +21,8 @@ a{color:#1F5F4A}a:hover{color:#174A39}
 .ib{width:44px;height:44px;display:flex;align-items:center;justify-content:center;border-radius:12px;text-decoration:none}
 .pill{display:inline-flex;align-items:center;gap:4px;height:24px;padding:0 9px;border-radius:999px;font:600 12px Inter,sans-serif;white-space:nowrap}
 .chip{height:36px;padding:0 14px;border-radius:999px;font:600 13px Inter,sans-serif;cursor:pointer}
+.th{width:56px;height:56px;flex-shrink:0;border-radius:12px;overflow:hidden;background:#EFEDE8;border:1px solid #E4E2DC;display:flex;align-items:center;justify-content:center;box-sizing:border-box}
+.th img{width:100%;height:100%;object-fit:cover;display:block}
 </style>
 </helmet>
 <div style="width:390px;height:844px;box-sizing:border-box;background:#F5F4F0;font-family:Inter,sans-serif;color:#17181C;display:flex;flex-direction:column;padding:12px 20px 20px;gap:14px;overflow:hidden">
@@ -43,12 +45,13 @@ a{color:#1F5F4A}a:hover{color:#174A39}
 </div>
 <sc-for list="{{wishes}}" as="w" hint-placeholder-count="5">
 <div class="card" style="padding:14px 16px;display:flex;flex-direction:column;gap:10px;opacity:{{w.op}}">
-<div style="display:flex;justify-content:space-between;gap:10px;align-items:flex-start">
-<div style="display:flex;flex-direction:column;gap:3px;min-width:0">
+<div style="display:flex;gap:12px;align-items:flex-start">
+<a class="th" href="WishDetail.dc.html" tabindex="-1" aria-hidden="true"><sc-if value="{{w.img}}" hint-placeholder-val="{{ true }}"><img src="{{w.img}}" alt="" loading="lazy" width="56" height="56"></sc-if><sc-if value="{{w.noImg}}" hint-placeholder-val="{{ false }}"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#A7A39A" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="8" width="18" height="4" rx="1"></rect><path d="M12 8v13"></path><path d="M19 12v7a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2v-7"></path><path d="M7.5 8a2.5 2.5 0 0 1 0-5C10 3 12 8 12 8s2-5 4.5-5a2.5 2.5 0 0 1 0 5"></path></svg></sc-if></a>
+<div style="display:flex;flex-direction:column;gap:4px;min-width:0;flex:1">
 <a href="WishDetail.dc.html" style="font:600 15px Inter,sans-serif;color:#17181C;text-decoration:none">{{w.title}}</a>
 <span class="hint">{{w.meta}}</span>
+<span><span class="pill" style="background:{{w.pillBg}};color:{{w.pillFg}}">{{w.status}}</span></span>
 </div>
-<span class="pill" style="background:{{w.pillBg}};color:{{w.pillFg}}">{{w.status}}</span>
 </div>
 <sc-if value="{{w.group}}" hint-placeholder-val="{{ false }}">
 <div style="display:flex;flex-direction:column;gap:6px">
@@ -68,10 +71,10 @@ class Component extends DCLogic {
   constructor(p){ super(p); this.state = { f: 'all' }; }
   renderVals() {
     const all = [
-      { title: 'Noise-Cancelling-Kopfhörer', meta: '199 € · Top-Wunsch · elektro-markt.de', status: 'Gruppengeschenk', kind: 'group', pct: '80%', progress: '160 von 199 € · 3 Personen' },
-      { title: 'Roman „Die Mitternachtsbibliothek“', meta: '24 € · buchladen.de', status: 'Offen', kind: 'open' },
+      { title: 'Noise-Cancelling-Kopfhörer', meta: '199 € · Top-Wunsch · elektro-markt.de', status: 'Gruppengeschenk', kind: 'group', img: 'img/kopfhoerer.svg', pct: '80%', progress: '160 von 199 € · 3 Personen' },
+      { title: 'Roman „Die Mitternachtsbibliothek“', meta: '24 € · buchladen.de', status: 'Offen', kind: 'open', img: 'img/roman.svg' },
       { title: 'Konzertkarten – gern Jazz', meta: 'ohne Preis', status: 'Offen', kind: 'open' },
-      { title: 'Monstera-Pflanze', meta: '35 €', status: 'Von dir', kind: 'mine' },
+      { title: 'Monstera-Pflanze', meta: '35 €', status: 'Von dir', kind: 'mine', img: 'img/monstera.svg' },
       { title: 'Yogamatte, Kork', meta: '45 €', status: 'Vergeben · Max', kind: 'taken' }
     ];
     const f = this.state.f;
@@ -82,7 +85,7 @@ class Component extends DCLogic {
         const on = f === id;
         return { label, pressed: on ? 'true' : 'false', border: on ? '1px solid #17181C' : '1px solid #CFCBC2', bg: on ? '#17181C' : '#fff', fg: on ? '#fff' : '#17181C', pick: () => this.setState({ f: id }) };
       }),
-      wishes: shown.map(w => ({ ...w, group: w.kind === 'group', open: w.kind === 'open', op: '1', pillBg: colors[w.kind][0], pillFg: colors[w.kind][1] }))
+      wishes: shown.map(w => ({ ...w, img: w.img || '', noImg: !w.img, group: w.kind === 'group', open: w.kind === 'open', op: '1', pillBg: colors[w.kind][0], pillFg: colors[w.kind][1] }))
     };
   }
 }

@@ -27,6 +27,8 @@ a{color:#1F5F4A}a:hover{color:#174A39}
 .p-on{background:#F5F4F0;outline:2px solid #1F5F4A}
 .av{width:36px;height:36px;border-radius:999px;display:flex;align-items:center;justify-content:center;font:700 12px Inter,sans-serif;color:#fff;flex-shrink:0}
 .pill{display:inline-flex;align-items:center;height:24px;padding:0 9px;border-radius:999px;font:600 12px Inter,sans-serif;white-space:nowrap}
+.cimg{display:block;aspect-ratio:4/3;margin:-18px -18px 0;border-radius:15px 15px 0 0;overflow:hidden;background:#EFEDE8;border-bottom:1px solid #E4E2DC}
+.cimg img{width:100%;height:100%;object-fit:cover;display:block}
 </style>
 </helmet>
 <div style="min-height:980px;background:#F5F4F0;font-family:Inter,sans-serif;color:#17181C">
@@ -74,6 +76,7 @@ a{color:#1F5F4A}a:hover{color:#174A39}
 <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:16px">
 <sc-for list="{{wishes}}" as="w" hint-placeholder-count="5">
 <article class="card" style="padding:18px;display:flex;flex-direction:column;gap:12px">
+<sc-if value="{{w.img}}" hint-placeholder-val="{{ true }}"><a class="cimg" href="WishDetail.dc.html" tabindex="-1" aria-hidden="true"><img src="{{w.img}}" alt="" loading="lazy"></a></sc-if>
 <div style="display:flex;justify-content:space-between;gap:10px;align-items:flex-start">
 <a href="WishDetail.dc.html" style="font:600 16px/1.3 Inter,sans-serif;color:#17181C;text-decoration:none">{{w.title}}</a>
 <span class="pill" style="background:{{w.pillBg}};color:{{w.pillFg}}">{{w.status}}</span>
@@ -98,10 +101,10 @@ class Component extends DCLogic {
   renderVals() {
     const colors = { group: ['#FCEBDD','#8A3E0B'], open: ['#EFEDE8','#3D4048'], mine: ['#E3EFE9','#174A39'], taken: ['#EFEDE8','#5B5E66'] };
     const w = [
-      { title: 'Noise-Cancelling-Kopfhörer', meta: '199 € · Top-Wunsch · elektro-markt.de', status: 'Gruppengeschenk', kind: 'group' },
-      { title: 'Roman „Die Mitternachtsbibliothek“', meta: '24 € · buchladen.de', status: 'Offen', kind: 'open' },
+      { title: 'Noise-Cancelling-Kopfhörer', meta: '199 € · Top-Wunsch · elektro-markt.de', status: 'Gruppengeschenk', kind: 'group', img: 'img/kopfhoerer.svg' },
+      { title: 'Roman „Die Mitternachtsbibliothek“', meta: '24 € · buchladen.de', status: 'Offen', kind: 'open', img: 'img/roman.svg' },
       { title: 'Konzertkarten – gern Jazz', meta: 'ohne Preis', status: 'Offen', kind: 'open' },
-      { title: 'Monstera-Pflanze', meta: '35 €', status: 'Von dir', kind: 'mine' },
+      { title: 'Monstera-Pflanze', meta: '35 €', status: 'Von dir', kind: 'mine', img: 'img/monstera.svg' },
       { title: 'Yogamatte, Kork', meta: '45 €', status: 'Vergeben · Max', kind: 'taken' }
     ];
     return {
@@ -112,7 +115,7 @@ class Component extends DCLogic {
         { name: 'Papa', ini: 'PA', c: '#1F5F4A', stat: '2 Wünsche · 0 vergeben' },
         { name: 'Paul', ini: 'PL', c: '#5B5E66', stat: 'Noch keine Wünsche' }
       ].map(p => ({ ...p, cls: p.on ? 'p p-on' : 'p' })),
-      wishes: w.map(x => ({ ...x, group: x.kind === 'group', open: x.kind === 'open', pillBg: colors[x.kind][0], pillFg: colors[x.kind][1] }))
+      wishes: w.map(x => ({ ...x, img: x.img || '', group: x.kind === 'group', open: x.kind === 'open', pillBg: colors[x.kind][0], pillFg: colors[x.kind][1] }))
     };
   }
 }

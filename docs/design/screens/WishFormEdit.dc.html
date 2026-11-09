@@ -1,0 +1,150 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<title>Wunsch bearbeiten mit Bild</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700&amp;family=Inter:wght@400;500;600&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0}
+a{color:#1F5F4A}a:hover{color:#174A39}
+.h{font-family:'Bricolage Grotesque',sans-serif;margin:0}
+.btn{display:flex;align-items:center;justify-content:center;gap:8px;height:52px;border-radius:12px;font:600 16px Inter,sans-serif;text-decoration:none;border:0;box-sizing:border-box;padding:0 18px;cursor:pointer;flex-shrink:0}
+.btn-p{background:#1F5F4A;color:#fff}.btn-p:hover{color:#fff;background:#174A39}
+.field{display:flex;flex-direction:column;gap:6px}
+.lbl{font:600 14px Inter,sans-serif;color:#17181C}
+.inp{height:48px;border-radius:12px;padding:0 14px;font:400 16px Inter,sans-serif;color:#17181C;background:#fff;box-sizing:border-box;width:100%}
+.ta{height:80px;padding:12px 14px;resize:none;line-height:1.4;border:1px solid #CFCBC2}
+.hint{font:400 13px/1.45 Inter,sans-serif;color:#5B5E66;margin:0}
+.seg{flex:1;height:44px;border-radius:10px;font:600 14px Inter,sans-serif;cursor:pointer}
+.drop{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;min-height:132px;border-radius:16px;background:#fff;text-align:center;padding:16px;box-sizing:border-box;cursor:pointer}
+.drop:hover{background:#FBFAF7}
+.drop:focus-within{outline:3px solid #1F5F4A;outline-offset:2px}
+.drop-ic{width:44px;height:44px;border-radius:999px;display:flex;align-items:center;justify-content:center}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+.photo{position:relative;aspect-ratio:4/3;border-radius:16px;overflow:hidden;background:#EFEDE8;border:1px solid #E4E2DC}
+.photo img{width:100%;height:100%;object-fit:contain;display:block}
+.spin{width:16px;height:16px;border-radius:50%;border:2px solid currentColor;border-right-color:transparent;animation:spin .8s linear infinite;display:inline-block}
+@keyframes spin{to{transform:rotate(360deg)}}
+@media (prefers-reduced-motion:reduce){.spin{animation:none}}
+.sbtn{flex:1;display:flex;align-items:center;justify-content:center;gap:6px;height:36px;border-radius:12px;font:600 13px Inter,sans-serif;cursor:pointer;box-sizing:border-box}
+</style>
+</helmet>
+<div style="width:390px;height:1200px;box-sizing:border-box;background:#F5F4F0;font-family:Inter,sans-serif;color:#17181C;display:flex;flex-direction:column;padding:16px 20px 24px;gap:18px">
+<div style="display:flex;align-items:center;justify-content:space-between">
+<a href="MyList.dc.html" aria-label="Schließen" style="width:44px;height:44px;margin-left:-10px;display:flex;align-items:center;justify-content:center">
+<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#17181C" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12"></path><path d="M18 6L6 18"></path></svg>
+</a>
+<span style="font:600 15px Inter,sans-serif">Wunsch bearbeiten</span>
+<span style="width:44px"></span>
+</div>
+<form style="display:flex;flex-direction:column;gap:16px">
+<div class="field">
+<span class="lbl" id="bild-lbl">Bild <span style="font-weight:400;color:#5B5E66">(optional)</span></span>
+<sc-if value="{{noImg}}" hint-placeholder-val="{{ true }}">
+<label class="drop" style="border:{{dropBorder}}">
+<input class="sr" id="bild" type="file" accept="image/jpeg,image/png,image/webp,image/heic,image/heif" onChange="{{onFile}}" aria-labelledby="bild-lbl" aria-describedby="bild-hint" aria-invalid="{{imgInvalid}}">
+<span class="drop-ic" style="background:{{icBg}}"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="{{icFg}}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="4" width="18" height="16" rx="3"></rect><circle cx="9" cy="10" r="2"></circle><path d="M21 16l-5-5-9 9"></path></svg></span>
+<span style="font:600 15px Inter,sans-serif">Foto hinzufügen</span>
+<span class="hint">Aufnehmen oder aus deinen Fotos wählen</span>
+</label>
+</sc-if>
+<sc-if value="{{hasImg}}" hint-placeholder-val="{{ false }}">
+<div class="photo"><img src="{{img}}" alt="Bild zu: Wanderschuhe Gr. 44"><sc-if value="{{saving}}" hint-placeholder-val="{{ false }}"><div style="position:absolute;inset:0;background:rgba(23,24,28,.45);color:#fff;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;font:600 14px Inter,sans-serif"><span class="spin"></span>Bild wird hochgeladen …</div></sc-if></div>
+<div style="display:flex;gap:8px">
+<label class="sbtn" style="background:#fff;color:#17181C;border:1px solid #CFCBC2"><input class="sr" type="file" accept="image/jpeg,image/png,image/webp,image/heic,image/heif" onChange="{{onFile}}">Anderes Bild</label>
+<button type="button" class="sbtn" onClick="{{onRemove}}" style="background:transparent;color:#B42318;border:0">Bild entfernen</button>
+</div>
+</sc-if>
+<span id="bild-hint" style="font:400 13px/1.45 Inter,sans-serif;color:{{imgHintColor}}" role="{{imgRole}}">{{imgHint}}</span>
+</div>
+<div class="field">
+<label class="lbl" for="t">Titel</label>
+<input class="inp" id="t" type="text" maxlength="80" value="Wanderschuhe Gr. 44" style="border:1px solid #CFCBC2">
+</div>
+<div class="field">
+<label class="lbl" for="l">Link zum Produkt <span style="font-weight:400;color:#5B5E66">(optional)</span></label>
+<input class="inp" id="l" type="url" inputmode="url" autocapitalize="none" spellcheck="false" value="{{url}}" onChange="{{onUrl}}" aria-invalid="{{invalid}}" style="border:{{urlBorder}}">
+<span style="font:400 13px/1.45 Inter,sans-serif;color:{{urlHintColor}}">{{urlHint}}</span>
+</div>
+<div class="field">
+<label class="lbl" for="d">Beschreibung <span style="font-weight:400;color:#5B5E66">(optional)</span></label>
+<textarea class="inp ta" id="d" maxlength="500">Wasserdicht, eher breiter Leisten. Farbe egal.</textarea>
+</div>
+<div class="field">
+<label class="lbl" for="pr">Preis / Wert</label>
+<div style="position:relative">
+<input class="inp" id="pr" type="text" inputmode="decimal" value="160,00" style="border:1px solid #CFCBC2;padding-right:40px">
+<span style="position:absolute;right:14px;top:14px;font:500 16px Inter,sans-serif;color:#5B5E66" aria-hidden="true">€</span>
+</div>
+<p class="hint">Hilft anderen beim Aufteilen. Leer lassen, wenn unbekannt.</p>
+</div>
+<div class="field">
+<span class="lbl" id="prio">Priorität</span>
+<div role="group" aria-labelledby="prio" style="display:flex;gap:6px;background:#EAE8E2;border-radius:12px;padding:4px">
+<sc-for list="{{prios}}" as="p" hint-placeholder-count="2">
+<button type="button" class="seg" onClick="{{p.pick}}" aria-pressed="{{p.pressed}}" style="border:0;background:{{p.bg}};color:{{p.fg}}">{{p.label}}</button>
+</sc-for>
+</div>
+</div>
+</form>
+<div style="flex-grow:1"></div>
+<button type="button" class="btn btn-p" onClick="{{onSave}}" aria-busy="{{busy}}" style="opacity:{{saveOp}}"><sc-if value="{{saving}}" hint-placeholder-val="{{ false }}"><span class="spin"></span></sc-if>{{saveLabel}}</button>
+<button type="button" class="btn" style="background:transparent;color:#B42318;border:1px solid #F5C2BD">Wunsch löschen</button>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":1200}}'>
+class Component extends DCLogic {
+  constructor(p){ super(p); this.state = { url: 'https://outdoor-laden.de/p/wanderschuh-gtx', prio: 'normal', img: 'img/wanderschuh.svg', imgErr: null, saving: false }; }
+  pick(e) {
+    const f = e.target.files && e.target.files[0];
+    e.target.value = '';
+    if (!f) return;
+    const okType = /^image\/(jpeg|png|webp|heic|heif)$/.test(f.type) || /\.(heic|heif)$/i.test(f.name);
+    if (!okType) return this.setState({ img: null, imgErr: 'Diese Datei können wir nicht als Bild lesen. Bitte wähle ein JPG, PNG, WebP oder HEIC.' });
+    if (f.size > 15 * 1024 * 1024) return this.setState({ img: null, imgErr: 'Das Bild ist größer als 15 MB. Bitte wähle ein kleineres Bild oder einen Screenshot.' });
+    if (this.state.img && this.state.img.startsWith('blob:')) URL.revokeObjectURL(this.state.img);
+    this.setState({ img: URL.createObjectURL(f), imgErr: null });
+  }
+  renderVals() {
+    const u = (this.state.url || '').trim();
+    const bad = u.length > 0 && !/^https:\/\/[^\s/$.?#][^\s]*$/i.test(u);
+    const img = this.state.img, imgErr = this.state.imgErr;
+    return {
+      saving: this.state.saving,
+      busy: this.state.saving ? 'true' : 'false',
+      saveOp: this.state.saving ? '0.6' : '1',
+      saveLabel: this.state.saving ? 'Wird gespeichert …' : 'Wunsch speichern',
+      onSave: () => { if (this.state.saving) return; this.setState({ saving: true }); setTimeout(() => this.setState({ saving: false }), 1800); },
+      noImg: !img,
+      hasImg: !!img,
+      img: img || '',
+      onFile: (e) => this.pick(e),
+      onRemove: () => { if (img && img.startsWith('blob:')) URL.revokeObjectURL(img); this.setState({ img: null, imgErr: null }); },
+      imgInvalid: imgErr ? 'true' : 'false',
+      dropBorder: imgErr ? '2px solid #B42318' : '1.5px dashed #CFCBC2',
+      icBg: imgErr ? '#FDECEA' : '#E3EFE9',
+      icFg: imgErr ? '#B42318' : '#1F5F4A',
+      imgHintColor: imgErr ? '#B42318' : '#5B5E66',
+      imgRole: imgErr ? 'alert' : 'note',
+      imgHint: imgErr || (img ? (img.startsWith('blob:') ? 'Wird beim Speichern verkleinert hochgeladen. Standortdaten werden entfernt.' : 'Nur für Mitglieder dieses Anlasses sichtbar.') : 'JPG, PNG, WebP oder HEIC, bis 15 MB. Wird verkleinert, Standortdaten werden entfernt.'),
+      url: this.state.url,
+      onUrl: (e) => this.setState({ url: e.target.value }),
+      invalid: bad ? 'true' : 'false',
+      urlBorder: bad ? '2px solid #B42318' : '1px solid #CFCBC2',
+      urlHintColor: bad ? '#B42318' : '#5B5E66',
+      urlHint: bad ? 'Nur sichere https://-Links sind erlaubt.' : 'Nur https://-Links. Der Link wird nicht vom Server abgerufen.',
+      prios: [['normal','Normal'],['top','Top-Wunsch']].map(([id,label]) => {
+        const on = this.state.prio === id;
+        return { label, pressed: on ? 'true' : 'false', bg: on ? '#fff' : 'transparent', fg: on ? '#17181C' : '#3D4048', pick: () => this.setState({ prio: id }) };
+      })
+    };
+  }
+}
+</script>
+</body>
+</html>

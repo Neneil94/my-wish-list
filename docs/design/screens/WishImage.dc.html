@@ -1,0 +1,182 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<title>Konzept Wunschbild</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700&amp;family=Inter:wght@400;500;600;700&amp;family=JetBrains+Mono:wght@400;500&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0}
+a{color:#1F5F4A}a:hover{color:#174A39}
+.h{font-family:'Bricolage Grotesque',sans-serif;margin:0}
+.card{background:#fff;border:1px solid #E4E2DC;border-radius:20px;padding:28px;box-sizing:border-box;display:flex;flex-direction:column;gap:14px}
+.k{font:600 12px Inter,sans-serif;letter-spacing:.08em;text-transform:uppercase;color:#1F5F4A;margin:0}
+.p{font:400 15px/1.55 Inter,sans-serif;color:#3D4048;margin:0}
+.li{font:400 14px/1.5 Inter,sans-serif;color:#3D4048;margin:0;padding-left:18px}
+.li li{margin-bottom:6px}
+.mono{font:400 13px/1.6 'JetBrains Mono',monospace;color:#17181C}
+.tag{display:inline-flex;align-items:center;height:28px;padding:0 12px;border-radius:999px;background:#E3EFE9;color:#174A39;font:600 13px Inter,sans-serif}
+.lbl{font:600 14px Inter,sans-serif;color:#17181C}
+.hint{font:400 13px/1.45 Inter,sans-serif;color:#5B5E66;margin:0}
+.drop{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;min-height:132px;border-radius:16px;background:#fff;text-align:center;padding:16px;box-sizing:border-box}
+.drop-ic{width:44px;height:44px;border-radius:999px;display:flex;align-items:center;justify-content:center}
+.photo{position:relative;aspect-ratio:4/3;border-radius:16px;overflow:hidden;background:#EFEDE8;border:1px solid #E4E2DC}
+.photo img{width:100%;height:100%;object-fit:contain;display:block}
+.sbtn{flex:1;display:flex;align-items:center;justify-content:center;gap:6px;height:36px;border-radius:12px;font:600 13px Inter,sans-serif;box-sizing:border-box}
+.state{background:#F5F4F0;border:1px solid #E4E2DC;border-radius:20px;padding:20px;display:flex;flex-direction:column;gap:6px;box-sizing:border-box}
+.st-t{font:700 13px 'JetBrains Mono',monospace;color:#1F5F4A;margin:0 0 6px}
+.spin{width:16px;height:16px;border-radius:50%;border:2px solid currentColor;border-right-color:transparent;display:inline-block}
+table{border-collapse:collapse;width:100%;font:400 14px/1.5 Inter,sans-serif;color:#3D4048}
+th,td{text-align:left;padding:10px 0;border-top:1px solid #E4E2DC;vertical-align:top}
+th{font:600 12px Inter,sans-serif;letter-spacing:.06em;text-transform:uppercase;color:#5B5E66;border-top:0;padding-top:0}
+td:first-child{font-weight:600;color:#17181C;width:200px;padding-right:20px}
+.row{display:flex;gap:10px;align-items:flex-start}
+.ow{font:700 13px 'JetBrains Mono',monospace;color:#8A3E0B;min-width:28px}
+</style>
+</helmet>
+<div style="width:1440px;height:2140px;box-sizing:border-box;background:#F5F4F0;padding:72px 80px;display:flex;flex-direction:column;gap:40px;font-family:Inter,sans-serif;color:#17181C">
+
+<div style="display:flex;justify-content:space-between;align-items:flex-end;gap:40px">
+<div style="display:flex;flex-direction:column;gap:12px;max-width:820px">
+<p class="k">my-wish-list · Erweiterung · Bild zum Wunsch</p>
+<h1 class="h" style="font-size:56px;line-height:1.04;font-weight:700;letter-spacing:-0.02em">Ein Foto pro Wunsch – damit niemand das falsche Modell kauft.</h1>
+<p class="p" style="font-size:17px">Wer sich etwas wünscht, kann ein Foto hochladen, zum Beispiel einen Shop-Screenshot oder ein Handyfoto. Geändert sind die Screens 07, 10, 11, 12, 13 und 15. Neu sind 11b (Bearbeiten mit Bild) und 13b (Vollbild).</p>
+</div>
+<div style="display:flex;gap:8px;flex-wrap:wrap;justify-content:flex-end;max-width:380px">
+<span class="tag">Optional, genau 1 Bild</span><span class="tag">Supabase Storage (privat)</span><span class="tag">WebP, max. 1600 px</span><span class="tag">EXIF/GPS entfernt</span>
+</div>
+</div>
+
+<div style="display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:24px">
+<div class="card">
+<p class="k">Formular · 11 / 11b</p>
+<h2 class="h" style="font-size:26px">Bildfeld ganz oben</h2>
+<ul class="li">
+<li>Tippen öffnet die Auswahl des Systems: Kamera oder Mediathek. Am Desktop kann man die Datei auch hineinziehen.</li>
+<li>Die Vorschau ist 4:3 und wird <b>nicht beschnitten</b> (<span class="mono">object-fit: contain</span>).</li>
+<li>Hochgeladen wird erst beim Speichern. Bis dahin ist das Bild nur eine lokale Vorschau, so entstehen keine verwaisten Dateien.</li>
+</ul>
+</div>
+<div class="card">
+<p class="k">Listen · 07 / 10 / 12 / 15</p>
+<h2 class="h" style="font-size:26px">Vorschaubild links</h2>
+<ul class="li">
+<li>Auf dem Handy ein Quadrat mit 56 px (in „Meine Geschenke“ 44 px), zugeschnitten mit <span class="mono">object-fit: cover</span>.</li>
+<li>Ohne Bild erscheint eine ruhige Kachel mit Geschenk-Symbol, damit die Titel bündig bleiben.</li>
+<li>In 07 und 12 rutscht die Status-Pill unter den Titel, damit lange Titel Platz haben. Am Desktop (15) liegt das Bild als 4:3-Kopf auf der Karte. Ohne Bild fällt der Kopf weg.</li>
+</ul>
+</div>
+<div class="card">
+<p class="k">Detail · 13 / 13b</p>
+<h2 class="h" style="font-size:26px">Großes Bild, Tippen = Vollbild</h2>
+<ul class="li">
+<li>Das Bild steht über Titel und Preis. Ein Symbol unten rechts zeigt, dass man es vergrößern kann.</li>
+<li>Das Vollbild ist ein <span class="mono">&lt;dialog&gt;</span> auf dunklem Grund. Es schließt per X, Esc oder Wisch nach unten. Zoomen geht über den Browser.</li>
+<li>Ohne Bild bleibt die Seite wie in v1. Bei eigenen Wünschen erscheint dann „Bild hinzufügen“.</li>
+</ul>
+</div>
+</div>
+
+<div class="card" style="gap:20px">
+<div style="display:flex;justify-content:space-between;align-items:baseline;gap:20px">
+<div style="display:flex;flex-direction:column;gap:6px"><p class="k">Zustände des Bildfelds</p><h2 class="h" style="font-size:26px">Leer · gewählt · beim Speichern · Fehler</h2></div>
+<p class="hint" style="max-width:420px">Screen 11 zeigt die Zustände interaktiv. Mit einer echten Datei lassen sich Vorschau und Fehler ausprobieren.</p>
+</div>
+<div style="display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:20px;align-items:start">
+
+<div class="state">
+<p class="st-t">A · leer</p>
+<span class="lbl">Bild <span style="font-weight:400;color:#5B5E66">(optional)</span></span>
+<div class="drop" style="border:1.5px dashed #CFCBC2">
+<span class="drop-ic" style="background:#E3EFE9"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#1F5F4A" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="4" width="18" height="16" rx="3"></rect><circle cx="9" cy="10" r="2"></circle><path d="M21 16l-5-5-9 9"></path></svg></span>
+<span style="font:600 15px Inter,sans-serif">Foto hinzufügen</span>
+<span class="hint">Aufnehmen oder aus deinen Fotos wählen</span>
+</div>
+<p class="hint">JPG, PNG, WebP oder HEIC, bis 15 MB. Wird verkleinert, Standortdaten werden entfernt.</p>
+</div>
+
+<div class="state">
+<p class="st-t">B · gewählt</p>
+<span class="lbl">Bild <span style="font-weight:400;color:#5B5E66">(optional)</span></span>
+<div class="photo"><img src="img/wanderschuh.svg" alt="Vorschau: Wanderschuh"></div>
+<div style="display:flex;gap:8px">
+<span class="sbtn" style="background:#fff;color:#17181C;border:1px solid #CFCBC2">Anderes Bild</span>
+<span class="sbtn" style="color:#B42318">Bild entfernen</span>
+</div>
+<p class="hint">Wird beim Speichern verkleinert hochgeladen. Standortdaten werden entfernt.</p>
+</div>
+
+<div class="state">
+<p class="st-t">C · beim Speichern</p>
+<span class="lbl">Bild <span style="font-weight:400;color:#5B5E66">(optional)</span></span>
+<div class="photo"><img src="img/wanderschuh.svg" alt=""><div style="position:absolute;inset:0;background:rgba(23,24,28,.45);color:#fff;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;font:600 14px Inter,sans-serif"><span class="spin"></span>Bild wird hochgeladen …</div></div>
+<div style="display:flex;align-items:center;justify-content:center;gap:8px;height:52px;border-radius:12px;background:#1F5F4A;color:#fff;opacity:.6;font:600 16px Inter,sans-serif"><span class="spin"></span>Wird gespeichert …</div>
+<p class="hint">Bei etwa 300 KB meist unter einer Sekunde.</p>
+</div>
+
+<div class="state">
+<p class="st-t">D · Fehler</p>
+<span class="lbl">Bild <span style="font-weight:400;color:#5B5E66">(optional)</span></span>
+<div class="drop" style="border:2px solid #B42318">
+<span class="drop-ic" style="background:#FDECEA"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#B42318" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="9"></circle><path d="M12 7.5v5.5"></path><path d="M12 16.5v.01"></path></svg></span>
+<span style="font:600 15px Inter,sans-serif">Foto hinzufügen</span>
+<span class="hint">Aufnehmen oder aus deinen Fotos wählen</span>
+</div>
+<p style="margin:0;font:400 13px/1.45 Inter,sans-serif;color:#B42318">Diese Datei können wir nicht als Bild lesen. Bitte wähle ein JPG, PNG, WebP oder HEIC.</p>
+</div>
+
+</div>
+</div>
+
+<div style="display:grid;grid-template-columns:minmax(0,1.25fr) minmax(0,1fr);gap:24px;align-items:start">
+<div class="card">
+<p class="k">Texte &amp; Fehlerfälle</p>
+<table>
+<thead><tr><th>Fall</th><th>Text in der App</th></tr></thead>
+<tbody>
+<tr><td>Kein Bild</td><td>„Diese Datei können wir nicht als Bild lesen. Bitte wähle ein JPG, PNG, WebP oder HEIC.“</td></tr>
+<tr><td>Größer als 15 MB</td><td>„Das Bild ist größer als 15 MB. Bitte wähle ein kleineres Bild oder einen Screenshot.“</td></tr>
+<tr><td>HEIC nicht lesbar</td><td>„Dein Browser kann dieses HEIC-Foto nicht öffnen. Mach am besten einen Screenshot davon und lade den hoch.“</td></tr>
+<tr><td>Upload fehlgeschlagen</td><td>Alert über dem Formular: „Der Wunsch ist gespeichert, das Bild konnte aber nicht hochgeladen werden. Versuch es gleich noch einmal.“ Das Bild bleibt gewählt.</td></tr>
+<tr><td>Bild lädt nicht</td><td>Das Vorschaubild fällt still auf die Geschenk-Kachel zurück. Auf der Detailseite entfällt der Bildbereich.</td></tr>
+<tr><td>Wunsch löschen</td><td>Der bestehende Dialog bekommt den Zusatz: „Das Bild wird ebenfalls gelöscht.“</td></tr>
+<tr><td>Aus anderer Liste übernehmen</td><td>Das Bild wird mitkopiert, ohne zusätzlichen Text.</td></tr>
+</tbody>
+</table>
+</div>
+
+<div class="card">
+<p class="k">Technik &amp; Sicherheit</p>
+<div class="mono" style="background:#F5F4F0;border-radius:12px;padding:14px 16px">Datei wählen<br>  ▼ Canvas: dekodieren, 1600 px + 320 px, WebP<br>  ▼ Vorschau (blob:)<br>Wunsch speichern (RPC)<br>  ▼ Upload ──► Storage „wish-images“ (privat)<br>  ▼ RPC set_wish_image(wish_id, path)</div>
+<ul class="li">
+<li><b>Pfad</b> <span class="mono">{group_id}/{wish_id}/{uuid}.webp</span>. Jedes Ersetzen bekommt eine neue UUID, damit kein Cache ein altes Bild zeigt.</li>
+<li><b>Lesen</b> dürfen aktive Mitglieder des Anlasses (<span class="mono">is_active_member</span>), <b>Schreiben</b> nur der Owner. Bucket-Limit: 2 MB, nur <span class="mono">image/webp</span>.</li>
+<li>Das Neu-Kodieren im Browser entfernt <b>EXIF und GPS</b>. Bildtransformationen von Supabase gibt es im Free Tier nicht.</li>
+<li><b>Signierte URLs</b> gelten 1 Stunde (wie <span class="mono">jwt_expiry</span>). Die CSP braucht <span class="mono">img-src 'self' data: blob: https://&lt;projekt&gt;.supabase.co</span>.</li>
+<li>Rund 300 KB pro Wunsch: 1 GB Free-Tier-Speicher reicht für gut 3000 Bilder.</li>
+</ul>
+</div>
+</div>
+
+<div class="card">
+<p class="k">Offene Entscheidungen</p>
+<div style="display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:24px">
+<div class="row"><span class="ow">1</span><p class="p"><b>Platzhalter-Kachel immer?</b> Der Entwurf zeigt sie bei jedem Wunsch ohne Bild. Alternative: nur, wenn mindestens ein Wunsch der Liste ein Bild hat.</p></div>
+<div class="row"><span class="ow">2</span><p class="p"><b>Ein Bild oder mehrere?</b> Der Entwurf sieht genau eines vor. Mehrere bräuchten eine Galerie und eine Sortierung im Formular.</p></div>
+<div class="row"><span class="ow">3</span><p class="p"><b>Bild aus dem Produktlink?</b> Bewusst nicht: Der Server ruft Links nicht ab. Das würde eine neue Angriffsfläche (SSRF) öffnen.</p></div>
+</div>
+</div>
+
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1440,"height":2140}}'>
+class Component extends DCLogic {
+renderVals() { return {}; }
+}
+</script>
+</body>
+</html>
