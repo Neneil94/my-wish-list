@@ -3,7 +3,8 @@ import { Link, useParams } from '@tanstack/react-router'
 import { GroupGate, useGroupId, type GroupData } from '../components/GroupLayout'
 import { Page } from '../components/AppShell'
 import { Alert, Avatar, BackHeader, Button, Card, ConfirmDialog, Pill, ProgressBar, SectionLabel, btn } from '../components/ui'
-import { IconExternal } from '../components/icons'
+import { IconExternal, IconImage } from '../components/icons'
+import { WishPhoto } from '../components/WishImage'
 import { useClaimAction } from '../lib/api'
 import { errorMessage } from '../lib/errors'
 import { formatCents } from '../lib/money'
@@ -37,6 +38,8 @@ function WishDetail({ d, wishId }: { d: GroupData; wishId: string }) {
         ? <BackHeader to="/groups/$groupId/my-list" params={{ groupId: d.group.id }} label="Zurück zu meiner Liste" />
         : <BackHeader to="/groups/$groupId/people/$userId" params={{ groupId: d.group.id, userId: wish.owner_id }} label={`Zurück zur Liste von ${ownerName}`} />}
 
+      {wish.image_path ? <WishPhoto path={wish.image_path} title={wish.title} /> : null}
+
       <div className="flex flex-col gap-2">
         <div className="flex flex-wrap gap-2">
           {wish.priority === 'top' ? <Pill tone="pine">Top-Wunsch</Pill> : null}
@@ -56,7 +59,14 @@ function WishDetail({ d, wishId }: { d: GroupData; wishId: string }) {
       ) : null}
 
       {isOwner ? (
-        <Alert tone="warn">Das ist dein eigener Wunsch. Ob ihn jemand beansprucht hat, bleibt eine Überraschung.</Alert>
+        <>
+          <Alert tone="warn">Das ist dein eigener Wunsch. Ob ihn jemand beansprucht hat, bleibt eine Überraschung.</Alert>
+          {!wish.image_path ? (
+            <Link to="/groups/$groupId/wishes/$wishId/edit" params={params} className={btn('secondary', 'md')}>
+              <IconImage size={18} />Bild hinzufügen
+            </Link>
+          ) : null}
+        </>
       ) : (
         <>
           {action.error ? <Alert>{errorMessage(action.error)}</Alert> : null}

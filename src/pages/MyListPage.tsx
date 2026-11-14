@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { Link } from '@tanstack/react-router'
 import { GroupGate, useGroupId, type GroupData } from '../components/GroupLayout'
 import { Page } from '../components/AppShell'
+import { WishThumb } from '../components/WishImage'
 import { Alert, BackHeader, Button, Card, EmptyState, Pill, btn } from '../components/ui'
 import { IconEdit, IconEyeOff, IconLink, IconPlus } from '../components/icons'
 import { useGroups, useWishAction } from '../lib/api'
@@ -33,7 +34,8 @@ function MyList({ d }: { d: GroupData }) {
 
       {mine.length === 0 ? <EmptyState title="Noch keine Wünsche">Füge deinen ersten Wunsch hinzu – mit Link, Beschreibung und Preis.</EmptyState> : null}
       {mine.map((w) => (
-        <Card key={w.id} className="flex items-start gap-3 py-3.5 pr-1.5 pl-4">
+        <Card key={w.id} className="flex items-start gap-3 py-3.5 pr-1.5 pl-3.5">
+          <WishThumb path={w.image_path} />
           <div className="flex min-w-0 flex-1 flex-col gap-1.5">
             <div className="flex flex-wrap items-center gap-2">
               <span className="text-[15px] font-semibold">{w.title}</span>
@@ -93,7 +95,7 @@ function CopyFromOtherList({ d }: { d: GroupData }) {
               <span className="truncate text-sm font-semibold">{w.title}</span>
               <span className="text-xs text-muted">aus {groupName(w.group_id)}</span>
             </div>
-            <Button size="sm" variant="secondary" disabled={done} onClick={() => copy.mutate({ type: 'copy', wishId: w.id })}>
+            <Button size="sm" variant="secondary" disabled={done} onClick={() => copy.mutate({ type: 'copy', wish: w })}>
               {done ? 'Übernommen' : 'Übernehmen'}
             </Button>
           </div>

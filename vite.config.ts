@@ -43,7 +43,8 @@ function cspPlugin(supabaseUrl: string): Plugin {
         "script-src 'self'",
         "style-src 'self'",
         "font-src 'self'",
-        "img-src 'self' data:",
+        // blob: für die lokale Vorschau, Supabase für signierte Bild-URLs (privater Bucket).
+        `img-src 'self' data: blob: ${origin}`,
         `connect-src ${origin}`,
         "manifest-src 'self'",
         "base-uri 'none'",

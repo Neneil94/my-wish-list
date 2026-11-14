@@ -1,5 +1,6 @@
 import { Link } from '@tanstack/react-router'
 import { Page } from '../components/AppShell'
+import { WishThumb } from '../components/WishImage'
 import { Alert, Button, Card, EmptyState, Loading, Pill, SectionLabel } from '../components/ui'
 import { IconCheck } from '../components/icons'
 import { useClaimAction, useDismissNotice, useMyGifts, useNotices, type MyGift } from '../lib/api'
@@ -61,15 +62,16 @@ export function MyGiftsPage() {
               const price = g.wish.price_cents
               return (
                 <Card key={g.claim.id} className="flex flex-col gap-2 px-4 py-3.5">
-                  <div className="flex items-start justify-between gap-2.5">
-                    <div className="flex min-w-0 flex-col gap-0.5">
+                  <div className="flex items-start gap-2.5">
+                    <WishThumb path={g.wish.image_path} size={44} />
+                    <div className="flex min-w-0 flex-1 flex-col gap-0.5">
                       <span className="text-[13px] text-muted">für {g.ownerName}</span>
                       {group ? (
                         <Link to="/groups/$groupId/wishes/$wishId" params={{ groupId: group.id, wishId: g.wish.id }}
                           className="text-[15px] font-semibold text-ink no-underline hover:underline">{g.wish.title}</Link>
                       ) : <span className="text-[15px] font-semibold">{g.wish.title}</span>}
+                      <span className="mt-1"><Pill tone={isGroup ? 'apricot' : 'pine'}>{isGroup ? 'Gruppengeschenk' : 'Komplett'}</Pill></span>
                     </div>
-                    <Pill tone={isGroup ? 'apricot' : 'pine'}>{isGroup ? 'Gruppengeschenk' : 'Komplett'}</Pill>
                   </div>
                   <div className="flex items-center justify-between gap-2">
                     <span className="text-sm font-medium text-ink-2">

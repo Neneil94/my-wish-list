@@ -38,15 +38,16 @@ Browser (statische SPA auf GitHub Pages)
    │  HTTPS, JWT (Bearer)
    ├──► Supabase PostgREST ──► Postgres  (Lesen per RLS, Schreiben nur über geprüfte RPC-Funktionen)
    ├──► Supabase Auth       (Login mit Username → interne Adresse <username>@users.invalid)
+   ├──► Supabase Storage    (Wunschbilder, privater Bucket, signierte URLs, Zugriff per RLS)
    └──► Edge Function "account"
-          check-access · register · reset-password · change-password · rotate-recovery
+          check-access · register · reset-password · change-password · rotate-recovery · cleanup-images
 ```
 
 | Pfad | Inhalt |
 | --- | --- |
 | `src/` | React-App (Seiten in `src/pages`, Datenzugriff in `src/lib/api.ts`) |
 | `supabase/migrations/` | Datenbankschema, RLS-Policies, RPC-Funktionen |
-| `supabase/functions/account/` | Edge Function für Zugangspasswort, Registrierung, Passwort-Reset |
+| `supabase/functions/account/` | Edge Function für Zugangspasswort, Registrierung, Passwort-Reset, Bild-Aufräumen |
 | `supabase/tests/` | Automatische Tests der Zugriffsregeln gegen echtes Postgres |
 | `scripts/hash-access-code.mjs` | Erzeugt den Hash für das Zugangspasswort |
 | `scripts/backup-db.sh`, `scripts/restore-db.sh` | Daten-Backup und Wiederherstellung der Datenbank (siehe [Backups](#backups)) |
@@ -76,9 +77,15 @@ Browser (statische SPA auf GitHub Pages)
 - **Überraschungsschutz in der Datenbank:** Claims eines Wunsches sind für dessen Owner per Policy unsichtbar –
   auch für Admins, auch über die API.
 - Usersuche nur eingeloggt und nur exakte Treffer (keine Enumeration über Teiltreffer).
+- **Wunschbilder** liegen im privaten Storage-Bucket `wish-images` (nur WebP/JPEG, max. 1 MiB). Hochladen darf nur
+  der Owner in den Ordner seines Wunsches, Ändern/Löschen kein Client. Mitglieder lesen nur das aktuelle Bild eines
+  bestehenden Wunsches; ersetzte oder gelöschte Bilder sind sofort nicht mehr abrufbar (bereits ausgegebene signierte
+  URLs gelten höchstens noch 1 Stunde). Der Browser verkleinert jedes Bild und kodiert es neu, dadurch werden
+  EXIF-/GPS-Daten entfernt. Verwaiste Dateien löscht die Edge Function (`cleanup-images`, rate-limitiert); welche
+  Dateien verwaist sind, bestimmt allein die Datenbank.
 
 **Weitere Maßnahmen**
-- Strikte Content-Security-Policy (keine Inline-Skripte, nur Supabase als Verbindungsziel), `no-referrer`,
+- Strikte Content-Security-Policy (keine Inline-Skripte, nur Supabase als Verbindungs- und Bildquelle), `no-referrer`,
   Frame-Busting gegen Clickjacking (Pages erlaubt keine eigenen Header).
 - Kein `dangerouslySetInnerHTML`/`innerHTML` (per ESLint verboten); Produkt-Links nur `https:` mit
   `rel="noopener noreferrer nofollow"`, Prüfung im Client **und** per CHECK-Constraint.
@@ -158,6 +165,9 @@ npx supabase@3.0.0 functions serve --env-file supabase/functions/.env.local
 
 > Die Function prüft JWTs selbst; öffentliche Aktionen (Zugang, Registrierung, Reset) brauchen keins.
 
+> `db push` legt auch den privaten Storage-Bucket `wish-images` samt Zugriffsregeln für die Wunschbilder an.
+> Nach Änderungen an der Function (z. B. neue Aktion `cleanup-images`) Schritt 6 wiederholen.
+
 ## GitHub Pages einrichten
 
 1. Repository → **Settings → Pages → Source: GitHub Actions**.
@@ -176,7 +186,7 @@ Empfohlen: Branch-Protection für `main` (PR + grüne Checks erforderlich).
 ## Tests
 
 ```bash
-npm test          # Unit-Tests (Validierung, Beträge)
+npm test          # Unit-Tests (Validierung, Beträge, Wunschbilder)
 ```
 
 ```bash

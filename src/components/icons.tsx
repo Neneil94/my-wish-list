@@ -87,3 +87,9 @@ export const IconMore = ({ size = 20, ...rest }: IconProps) => (
     <circle cx="12" cy="5" r="1.7" /><circle cx="12" cy="12" r="1.7" /><circle cx="12" cy="19" r="1.7" />
   </svg>
 )
+export const IconImage = (p: IconProps) => (
+  <svg {...base(p)}><rect x="3" y="4" width="18" height="16" rx="3" /><circle cx="9" cy="10" r="2" /><path d="m21 16-5-5-9 9" /></svg>
+)
+export const IconExpand = (p: IconProps) => (
+  <svg {...base(p)}><path d="M14 4h6v6" /><path d="M10 20H4v-6" /><path d="m20 4-7 7" /><path d="m4 20 7-7" /></svg>
+)

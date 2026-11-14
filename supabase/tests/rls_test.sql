@@ -64,6 +64,32 @@ select pg_temp.expect_error(format('select public.upsert_wish(null, %L, ''x'', n
 select pg_temp.expect_error(format('select public.claim_wish(%L, ''full'', null, null, false)', :'wid'), 'Eigenen Wunsch nicht beanspruchen');
 select pg_temp.expect_error(format('select public.invite_member(%L, ''clara'')', :'gid'), 'Nicht-Admin darf nicht einladen');
 
+-- ---- Wunschbilder: Upload nur durch Owner in den Ordner des Wunsches ----
+insert into storage.objects (bucket_id, name) values
+  ('wish-images', :'gid' || '/' || :'wid' || '/11111111-1111-1111-1111-111111111111.webp'),
+  ('wish-images', :'gid' || '/' || :'wid' || '/11111111-1111-1111-1111-111111111111-thumb.webp');
+select pg_temp.expect_error(format('insert into storage.objects (bucket_id, name) values (''wish-images'', %L)',
+  :'gid' || '/' || :'wid' || '/../evil.webp'), 'Kein Upload mit ungültigem Pfad');
+select pg_temp.expect_error(format('insert into storage.objects (bucket_id, name) values (''wish-images'', %L)',
+  :'gid' || '/' || :'wid' || '/22222222-2222-2222-2222-222222222222.png'), 'Kein Upload mit falscher Endung');
+select pg_temp.expect_error(format('insert into storage.objects (bucket_id, name) values (''wish-images'', %L)',
+  gen_random_uuid() || '/' || :'wid' || '/22222222-2222-2222-2222-222222222222.webp'), 'Kein Upload in fremden Anlass-Ordner');
+delete from storage.objects;
+update storage.objects set name = name || 'x';
+select pg_temp.expect((select count(*) from storage.objects) = 2, 'Owner sieht seine gerade hochgeladenen Bilder');
+reset role;
+select pg_temp.expect((select count(*) from storage.objects where name not like '%x') = 2, 'Owner kann Bilder weder löschen noch ändern');
+set role authenticated;
+select pg_temp.expect_error(format('select public.set_wish_image(%L, %L)', :'wid',
+  :'gid' || '/' || :'wid' || '/33333333-3333-3333-3333-333333333333.webp'), 'Bild ohne Upload nicht setzbar');
+select pg_temp.expect_error(format('select public.set_wish_image(%L, %L)', :'wid2',
+  :'gid' || '/' || :'wid' || '/11111111-1111-1111-1111-111111111111.webp'), 'Bild eines anderen Wunsches nicht setzbar');
+select public.set_wish_image(:'wid', :'gid' || '/' || :'wid' || '/11111111-1111-1111-1111-111111111111.webp');
+select pg_temp.expect((select image_path from public.wishes where id = :'wid') like '%/11111111-1111-1111-1111-111111111111.webp', 'Owner setzt Bild');
+select pg_temp.expect((select count(*) from storage.objects) = 2, 'Owner sieht aktuelles Bild und Vorschau');
+select pg_temp.expect_error('update public.wishes set image_path = null', 'Kein direktes UPDATE auf wishes');
+select pg_temp.expect_error('select public.wish_image_orphans(10)', 'Verwaiste Bilder nur für service_role');
+
 -- ---- A beansprucht (Gruppengeschenk) ----
 select pg_temp.as_user('00000000-0000-0000-0000-00000000000a');
 select public.claim_wish(:'wid', 'share', 10000, 'Ich bestelle', true);
@@ -79,6 +105,10 @@ select pg_temp.expect((select count(*) from public.wishes) = 2, 'B sieht eigene 
 
 -- ---- C ist fremd ----
 select pg_temp.as_user('00000000-0000-0000-0000-00000000000c');
+select pg_temp.expect((select count(*) from storage.objects) = 0, 'Fremde C sieht keine Wunschbilder');
+select pg_temp.expect_error(format('insert into storage.objects (bucket_id, name) values (''wish-images'', %L)',
+  :'gid' || '/' || :'wid' || '/44444444-4444-4444-4444-444444444444.webp'), 'Fremde C lädt kein Bild hoch');
+select pg_temp.expect_error(format('select public.set_wish_image(%L, null)', :'wid'), 'Fremde C entfernt kein Bild');
 select pg_temp.expect((select count(*) from public.groups) = 0, 'Fremde C sieht keine Gruppe');
 select pg_temp.expect((select count(*) from public.wishes) = 0, 'Fremde C sieht keine Wünsche');
 select pg_temp.expect((select count(*) from public.claims) = 0, 'Fremde C sieht keine Claims');
@@ -87,7 +117,11 @@ select pg_temp.expect_error(format('select public.claim_wish(%L, ''share'', 100,
 
 -- ---- D (eingeladen) nimmt an und macht mit ----
 select pg_temp.as_user('00000000-0000-0000-0000-00000000000d');
+select pg_temp.expect((select count(*) from storage.objects) = 0, 'Eingeladene D sieht vor Annahme keine Bilder');
 select public.respond_invite(:'gid', true);
+select pg_temp.expect((select count(*) from storage.objects) = 2, 'Mitglied D sieht Wunschbilder');
+select pg_temp.expect_error(format('insert into storage.objects (bucket_id, name) values (''wish-images'', %L)',
+  :'gid' || '/' || :'wid' || '/55555555-5555-5555-5555-555555555555.webp'), 'Mitglied D lädt kein Bild zu fremdem Wunsch hoch');
 select pg_temp.expect((select count(*) from public.claims) = 2, 'D sieht Claims anderer (nicht Owner)');
 select pg_temp.expect_error(format('select public.claim_wish(%L, ''full'', null, null, false)', :'wid'), 'Komplett-Claim bei laufendem Gruppengeschenk');
 select pg_temp.expect_error(format('select public.claim_wish(%L, ''share'', 500, null, false)', :'wid2'), 'Share auf komplett vergebenen Wunsch');
@@ -102,6 +136,7 @@ select public.delete_wish(:'wid');
 select pg_temp.expect((select count(*) from public.notices) = 0, 'Owner B bekommt keinen Hinweis');
 select pg_temp.as_user('00000000-0000-0000-0000-00000000000d');
 select pg_temp.expect((select count(*) from public.notices) = 1, 'D bekommt Hinweis zum entfernten Wunsch');
+select pg_temp.expect((select count(*) from storage.objects) = 0, 'Bild des gelöschten Wunsches ist sofort nicht mehr lesbar');
 select pg_temp.expect((select count(*) from public.claims where wish_id = :'wid') = 0, 'Claims des gelöschten Wunsches weg');
 
 -- ---- Admin verlässt Gruppe → Nachfolge ----
@@ -118,6 +153,7 @@ reset role;
 insert into public.rate_limits (key, window_start, hits) values ('alt', now() - interval '2 days', 99);
 grant execute on function pg_temp.expect(boolean, text) to service_role;
 set role service_role;
+select pg_temp.expect((select count(*) from public.wish_image_orphans(10)) = 2, 'Bilder gelöschter Wünsche gelten als verwaist');
 select pg_temp.expect(public.rate_limit_hit('k', 2, 60), 'Rate-Limit: 1. Versuch erlaubt');
 select pg_temp.expect(public.rate_limit_hit('k', 2, 60), 'Rate-Limit: 2. Versuch erlaubt');
 select pg_temp.expect(not public.rate_limit_hit('k', 2, 60), 'Rate-Limit: 3. Versuch gesperrt');

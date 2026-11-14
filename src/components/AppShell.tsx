@@ -1,8 +1,8 @@
-import type { ReactNode } from 'react'
+import { useEffect, type ReactNode } from 'react'
 import { Link, useRouterState } from '@tanstack/react-router'
 import { IconCalendar, IconGift, IconUser } from './icons'
 import { Avatar } from './ui'
-import { useMyProfile } from '../lib/api'
+import { cleanupWishImages, useMyProfile } from '../lib/api'
 
 const NAV = [
   { to: '/', label: 'Anlässe', Icon: IconCalendar, match: (p: string) => p === '/' || p.startsWith('/groups') },
@@ -13,6 +13,16 @@ const NAV = [
 export function AppShell({ children }: { children: ReactNode }) {
   const path = useRouterState({ select: (s) => s.location.pathname })
   const profile = useMyProfile()
+
+  // Einmal pro Browser-Sitzung verwaiste Wunschbilder aufräumen lassen (z. B. nach
+  // gelöschten Konten oder Anlässen, bei denen niemand mehr eingeloggt war).
+  useEffect(() => {
+    try {
+      if (sessionStorage.getItem('mwl-image-cleanup')) return
+      sessionStorage.setItem('mwl-image-cleanup', '1')
+    } catch { /* ohne sessionStorage: trotzdem aufräumen */ }
+    cleanupWishImages()
+  }, [])
 
   return (
     <div className="flex min-h-dvh flex-col">
