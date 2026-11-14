@@ -4,7 +4,8 @@ import { GroupGate, useGroupId, type GroupData } from '../components/GroupLayout
 import { Page } from '../components/AppShell'
 import { Alert, Button, ConfirmDialog, Field, Input, Textarea } from '../components/ui'
 import { IconClose } from '../components/icons'
-import { useSaveWish, useWishAction } from '../lib/api'
+import { WishImageField, type ImageFieldValue } from '../components/WishImage'
+import { WishImageError, useSaveWish, useWishAction, type ImageChange } from '../lib/api'
 import { errorMessage } from '../lib/errors'
 import { centsToInput, parseEuroToCents } from '../lib/money'
 import { safeHttpsUrl, wishSchema } from '../lib/rules'
@@ -37,6 +38,11 @@ function WishForm({ d, wish }: { d: GroupData; wish?: Wish }) {
     price: centsToInput(wish?.price_cents ?? null),
     priority: wish?.priority ?? ('normal' as 'normal' | 'top'),
   })
+  const initialImage: ImageFieldValue = wish?.image_path ? { kind: 'existing', path: wish.image_path } : { kind: 'none' }
+  const [image, setImage] = useState<ImageFieldValue>(initialImage)
+  // Wurde der Wunsch schon gespeichert, nur das Bild nicht: erneuter Versuch bearbeitet diesen Wunsch.
+  const [savedId, setSavedId] = useState<string | null>(null)
+  const imageSaved = !!wish?.image_path
 
   const parsed = wishSchema.safeParse(form)
   const price = parseEuroToCents(form.price)
@@ -49,9 +55,12 @@ function WishForm({ d, wish }: { d: GroupData; wish?: Wish }) {
     e.preventDefault()
     setTouched(true)
     if (!parsed.success || price === undefined) return
+    const change: ImageChange = image.kind === 'new' ? { type: 'set', image: image.image }
+      : image.kind === 'none' && imageSaved ? { type: 'remove' } : { type: 'keep' }
     try {
       await save.mutateAsync({
-        wishId: wish?.id,
+        wishId: wish?.id ?? savedId ?? undefined,
+        image: change,
         input: {
           title: parsed.data.title,
           description: parsed.data.description,
@@ -61,7 +70,9 @@ function WishForm({ d, wish }: { d: GroupData; wish?: Wish }) {
         },
       })
       await navigate(back)
-    } catch { /* Anzeige über save.error */ }
+    } catch (e) {
+      if (e instanceof WishImageError) setSavedId(e.wishId)
+    }
   }
 
   return (
@@ -73,6 +84,8 @@ function WishForm({ d, wish }: { d: GroupData; wish?: Wish }) {
       </div>
       <form onSubmit={submit} className="flex flex-col gap-4" noValidate>
         {save.error ? <Alert>{errorMessage(save.error)}</Alert> : null}
+        <WishImageField value={image} onChange={setImage} title={form.title}
+          uploading={save.isPending && image.kind === 'new'} />
         <Field label="Titel" htmlFor="t" error={err('title')}>
           <Input id="t" maxLength={80} value={form.title} placeholder="z. B. Wanderschuhe Gr. 44"
             onChange={(e) => setForm({ ...form, title: e.target.value })} invalid={!!err('title')} />
@@ -118,6 +131,7 @@ function WishForm({ d, wish }: { d: GroupData; wish?: Wish }) {
             } catch { /* Anzeige unten */ }
           }}>
           „{wish.title}“ wird von deiner Liste entfernt. Falls jemand ihn schon beansprucht hat, wird die Person informiert.
+          {wish.image_path ? ' Das Bild wird ebenfalls gelöscht.' : null}
           {del.error ? <Alert className="mt-3">{errorMessage(del.error)}</Alert> : null}
         </ConfirmDialog>
       ) : null}

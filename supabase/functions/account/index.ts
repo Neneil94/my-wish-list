@@ -5,6 +5,7 @@
 //   reset-password   Passwort per Wiederherstellungscode setzen (öffentlich, rate-limitiert)
 //   change-password  Passwort ändern (aktuelles nötig)          (eingeloggt)
 //   rotate-recovery  neuen Wiederherstellungscode erzeugen      (eingeloggt, Passwort nötig)
+//   cleanup-images   verwaiste Wunschbilder aus dem Storage löschen (eingeloggt, rate-limitiert)
 //
 // Öffentliche Registrierung ist im Supabase-Dashboard deaktiviert; Konten
 // entstehen ausschließlich hier über die Admin-API (service_role).
@@ -154,6 +155,33 @@ async function storeNewRecoveryCode(userId: string): Promise<string> {
   return code
 }
 
+/** Prüft nur das JWT (ohne Passwort) und liefert die User-ID. */
+async function requireUser(req: Request): Promise<string> {
+  const jwt = (req.headers.get('authorization') ?? '').replace(/^Bearer\s+/i, '')
+  if (!jwt) throw new HttpError(401, 'not_authenticated')
+  const { data, error } = await admin.auth.getUser(jwt)
+  if (error || !data.user) throw new HttpError(401, 'not_authenticated')
+  return data.user.id
+}
+
+/**
+ * Löscht Wunschbilder, auf die kein Wunsch mehr verweist (Wunsch/Anlass/Konto gelöscht,
+ * Bild ersetzt oder entfernt). Welche Objekte verwaist sind, entscheidet allein die
+ * Datenbank (wish_image_orphans) – der Aufrufer kann keine Pfade vorgeben.
+ */
+async function cleanupWishImages(): Promise<number> {
+  const { data, error } = await admin.rpc('wish_image_orphans', { p_limit: 200 })
+  if (error) throw new HttpError(500, 'server_error')
+  const names = (data as string[] | null) ?? []
+  if (names.length === 0) return 0
+  const { error: removeError } = await admin.storage.from('wish-images').remove(names)
+  if (removeError) {
+    console.error('wish image cleanup failed', removeError.message)
+    throw new HttpError(500, 'server_error')
+  }
+  return names.length
+}
+
 /** Prüft das JWT und das aktuelle Passwort des eingeloggten Nutzers. */
 async function reauthenticate(req: Request, password: unknown): Promise<{ id: string; username: string; jwt: string }> {
   const jwt = (req.headers.get('authorization') ?? '').replace(/^Bearer\s+/i, '')
@@ -263,6 +291,12 @@ async function handle(req: Request, body: Record<string, unknown>): Promise<unkn
     case 'rotate-recovery': {
       const user = await reauthenticate(req, body.currentPassword)
       return { recoveryCode: await storeNewRecoveryCode(user.id) }
+    }
+
+    case 'cleanup-images': {
+      const userId = await requireUser(req)
+      await limit(`cleanup:${userId}`, 30, 15 * 60)
+      return { removed: await cleanupWishImages() }
     }
 
     default:

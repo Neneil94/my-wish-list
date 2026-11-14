@@ -8,6 +8,7 @@ type Action =
   | { action: 'reset-password'; username: string; recoveryCode: string; newPassword: string }
   | { action: 'change-password'; currentPassword: string; newPassword: string }
   | { action: 'rotate-recovery'; currentPassword: string }
+  | { action: 'cleanup-images' }
 
 /** Ruft die Edge Function "account" auf und wirft AppError mit Server-Fehlercode. */
 export async function callAccount<T = Record<string, unknown>>(body: Action): Promise<T> {

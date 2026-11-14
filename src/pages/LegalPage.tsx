@@ -66,7 +66,7 @@ export function LegalPage() {
         <h3 className="m-0 mt-2 text-base font-bold text-ink">Welche Daten gespeichert werden</h3>
         <ul className={ul}>
           <li><b>Konto:</b> Username, Anzeigename, Passwort (nur als sicherer Hash) und ein Hash deines Wiederherstellungscodes. Eine E-Mail-Adresse wird nicht erhoben.</li>
-          <li><b>Inhalte:</b> Anlässe, Mitgliedschaften, Wünsche (Titel, Beschreibung, Link, Preis), Zusagen und Beträge für Gruppengeschenke sowie kurze Notizen.</li>
+          <li><b>Inhalte:</b> Anlässe, Mitgliedschaften, Wünsche (Titel, Beschreibung, Link, Preis, optional ein Bild), Zusagen und Beträge für Gruppengeschenke sowie kurze Notizen.</li>
           <li><b>Technische Daten:</b> Beim Aufruf verarbeiten die Hosting-Dienste (siehe unten) technisch bedingt deine IP-Adresse, Datum/Uhrzeit und Browserangaben, z. B. in Server- und Sicherheitsprotokollen.</li>
           <li><b>Missbrauchsschutz:</b> Zur Begrenzung von Fehlversuchen (Zugangspasswort, Registrierung, Passwort-Reset) wird ein nicht umkehrbarer, gesalzener Hashwert der IP-Adresse mit einem Zähler gespeichert – nie die IP-Adresse im Klartext.</li>
         </ul>

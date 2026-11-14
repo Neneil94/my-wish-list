@@ -1,6 +1,9 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { supabase } from './supabase'
 import { useAuth } from './auth'
+import { callAccount } from './account'
+import { AppError } from './errors'
+import { IMAGE_BUCKET, imagePath, thumbPathOf, type ProcessedImage } from './wishImage'
 import type { Claim, GroupMode, GroupWithMembers, Notice, Profile, Wish } from './types'
 
 const MEMBER_SELECT =
@@ -194,7 +197,11 @@ export function useGroupAction() {
           return rpc('set_member_recipient', { p_group_id: a.groupId, p_user_id: a.userId, p_is_recipient: a.isRecipient })
       }
     },
-    onSuccess: (_d, a) => invalidate(keys.groups, keys.group(a.groupId), keys.wishes(a.groupId), keys.claims(a.groupId)),
+    onSuccess: (_d, a) => {
+      // Dabei können Wünsche (und damit Bilder) wegfallen.
+      if (a.type === 'delete' || a.type === 'leave' || a.type === 'remove') cleanupWishImages()
+      return invalidate(keys.groups, keys.group(a.groupId), keys.wishes(a.groupId), keys.claims(a.groupId))
+    },
   })
 }
 
@@ -206,11 +213,36 @@ export interface WishInput {
   priority: 'normal' | 'top'
 }
 
+// ---------------------------------------------------------------- Wunschbilder
+
+/** Lässt verwaiste Bilder serverseitig löschen. Best effort: Fehler werden ignoriert. */
+export function cleanupWishImages(): void {
+  callAccount({ action: 'cleanup-images' }).catch(() => {})
+}
+
+async function uploadWishImage(groupId: string, wishId: string, img: ProcessedImage): Promise<string> {
+  const path = imagePath(groupId, wishId, crypto.randomUUID(), img.ext)
+  const bucket = supabase.storage.from(IMAGE_BUCKET)
+  const opts = { contentType: img.contentType, upsert: false, cacheControl: '3600' }
+  for (const [p, blob] of [[path, img.full], [thumbPathOf(path), img.thumb]] as const) {
+    const { error } = await bucket.upload(p, blob, opts)
+    if (error) throw error
+  }
+  return path
+}
+
+/** Bild konnte nicht gespeichert werden – der Wunsch selbst aber schon. */
+export class WishImageError extends AppError {
+  constructor(readonly wishId: string) { super('image_upload_failed') }
+}
+
+export type ImageChange = { type: 'keep' } | { type: 'remove' } | { type: 'set'; image: ProcessedImage }
+
 export function useSaveWish(groupId: string) {
   const invalidate = useInvalidate()
   return useMutation({
-    mutationFn: ({ wishId, input }: { wishId?: string; input: WishInput }) =>
-      rpc<string>('upsert_wish', {
+    mutationFn: async ({ wishId, input, image }: { wishId?: string; input: WishInput; image: ImageChange }) => {
+      const id = await rpc<string>('upsert_wish', {
         p_wish_id: wishId ?? null,
         p_group_id: groupId,
         p_title: input.title,
@@ -218,18 +250,48 @@ export function useSaveWish(groupId: string) {
         p_url: input.url,
         p_price_cents: input.priceCents,
         p_priority: input.priority,
-      }),
-    onSuccess: () => invalidate(keys.wishes(groupId), keys.groups),
+      })
+      if (image.type === 'keep') return id
+      try {
+        const path = image.type === 'set' ? await uploadWishImage(groupId, id, image.image) : null
+        await rpc('set_wish_image', { p_wish_id: id, p_image_path: path })
+      } catch {
+        throw new WishImageError(id)
+      }
+      // Das vorherige Bild ist jetzt verwaist.
+      if (wishId) cleanupWishImages()
+      return id
+    },
+    // Auch bei einem Bildfehler ist der Wunsch gespeichert.
+    onSettled: () => invalidate(keys.wishes(groupId), keys.groups),
   })
+}
+
+/** Kopiert das Bild eines Wunsches zu einem anderen eigenen Wunsch. */
+async function copyWishImage(source: string, groupId: string, wishId: string): Promise<void> {
+  const ext = source.endsWith('.jpg') ? 'jpg' : 'webp'
+  const target = imagePath(groupId, wishId, crypto.randomUUID(), ext)
+  const bucket = supabase.storage.from(IMAGE_BUCKET)
+  for (const [from, to] of [[source, target], [thumbPathOf(source), thumbPathOf(target)]] as const) {
+    const { error } = await bucket.copy(from, to)
+    if (error) throw error
+  }
+  await rpc('set_wish_image', { p_wish_id: wishId, p_image_path: target })
 }
 
 export function useWishAction(groupId: string) {
   const invalidate = useInvalidate()
   return useMutation({
-    mutationFn: (a: { type: 'delete'; wishId: string } | { type: 'copy'; wishId: string }) =>
-      a.type === 'delete'
-        ? rpc('delete_wish', { p_wish_id: a.wishId })
-        : rpc('copy_wish', { p_wish_id: a.wishId, p_target_group_id: groupId }),
+    mutationFn: async (a: { type: 'delete'; wishId: string } | { type: 'copy'; wish: Wish }) => {
+      if (a.type === 'delete') {
+        await rpc('delete_wish', { p_wish_id: a.wishId })
+        cleanupWishImages()
+        return
+      }
+      const id = await rpc<string>('copy_wish', { p_wish_id: a.wish.id, p_target_group_id: groupId })
+      // Das Bild kommt mit, wenn es klappt; sonst bleibt der kopierte Wunsch ohne Bild.
+      if (a.wish.image_path) await copyWishImage(a.wish.image_path, groupId, id).catch(() => {})
+    },
     onSuccess: () => invalidate(keys.wishes(groupId), keys.groups),
   })
 }

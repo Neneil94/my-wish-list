@@ -1,5 +1,6 @@
 import { Link } from '@tanstack/react-router'
 import { Pill, ProgressBar, btn } from './ui'
+import { WishCardImage, WishThumb } from './WishImage'
 import { formatCents } from '../lib/money'
 import { urlHost } from '../lib/rules'
 import type { WishSummary } from '../lib/wishStatus'
@@ -23,14 +24,19 @@ export function GiverWishCard({ wish, s, groupId, claimerName }: {
 
   const params = { groupId, wishId: wish.id }
   return (
-    <article className="flex flex-col gap-2.5 rounded-2xl border border-line bg-surface px-4 py-3.5">
-      <div className="flex items-start justify-between gap-2.5">
-        <div className="flex min-w-0 flex-col gap-1">
+    <article className="flex flex-col gap-2.5 overflow-hidden rounded-2xl border border-line bg-surface px-4 py-3.5">
+      {/* Desktop-Raster: Bild als Kopf der Karte. */}
+      {wish.image_path ? <div className="hidden md:block"><WishCardImage path={wish.image_path} /></div> : null}
+      <div className="flex items-start gap-3">
+        {/* Mobil: Vorschaubild links, Status unter dem Titel. */}
+        <div className="md:hidden"><WishThumb path={wish.image_path} /></div>
+        <div className="flex min-w-0 flex-1 flex-col gap-1">
           <Link to="/groups/$groupId/wishes/$wishId" params={params}
             className="text-[15px] leading-snug font-semibold text-ink no-underline hover:underline">{wish.title}</Link>
           <span className="text-[13px] text-muted">{meta}</span>
+          <span className="mt-0.5 md:hidden"><Pill tone={pill.tone}>{pill.text}</Pill></span>
         </div>
-        <Pill tone={pill.tone}>{pill.text}</Pill>
+        <span className="hidden md:inline-flex"><Pill tone={pill.tone}>{pill.text}</Pill></span>
       </div>
       {s.state === 'group' ? (
         <div className="flex flex-col gap-1.5">

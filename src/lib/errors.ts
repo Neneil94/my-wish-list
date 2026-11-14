@@ -31,6 +31,11 @@ const MESSAGES: Record<string, string> = {
   too_many_wishes: 'Maximal 100 Wünsche pro Liste.',
   origin_not_allowed: 'Diese Seite ist für den Server nicht freigeschaltet.',
   server_misconfigured: 'Der Server ist noch nicht vollständig eingerichtet.',
+  image_type: 'Diese Datei können wir nicht als Bild lesen. Bitte wähle ein JPG, PNG, WebP oder HEIC.',
+  image_too_large: 'Das Bild ist größer als 15 MB. Bitte wähle ein kleineres Bild oder einen Screenshot.',
+  image_heic: 'Dein Browser kann dieses HEIC-Foto nicht öffnen. Mach am besten einen Screenshot davon und lade den hoch.',
+  image_decode: 'Dieses Bild können wir nicht verarbeiten. Bitte wähle ein anderes Bild oder einen Screenshot.',
+  image_upload_failed: 'Der Wunsch ist gespeichert, das Bild konnte aber nicht hochgeladen werden. Versuch es gleich noch einmal.',
 }
 
 export class AppError extends Error {

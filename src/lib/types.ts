@@ -40,6 +40,8 @@ export interface Wish {
   url: string | null
   price_cents: number | null
   priority: 'normal' | 'top'
+  /** Pfad des großen Bildes im Bucket "wish-images"; die Vorschau liegt daneben (-thumb). */
+  image_path: string | null
   created_at: string
   updated_at: string
 }
