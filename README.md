@@ -29,6 +29,7 @@ die beschenkte Person etwas davon sieht.
 - [Supabase einrichten](#supabase-einrichten)
 - [GitHub Pages einrichten](#github-pages-einrichten)
 - [Tests](#tests)
+- [Backups](#backups)
 
 ## Architektur
 
@@ -48,6 +49,7 @@ Browser (statische SPA auf GitHub Pages)
 | `supabase/functions/account/` | Edge Function für Zugangspasswort, Registrierung, Passwort-Reset |
 | `supabase/tests/` | Automatische Tests der Zugriffsregeln gegen echtes Postgres |
 | `scripts/hash-access-code.mjs` | Erzeugt den Hash für das Zugangspasswort |
+| `scripts/backup-db.sh`, `scripts/restore-db.sh` | Daten-Backup und Wiederherstellung der Datenbank (siehe [Backups](#backups)) |
 
 ## Sicherheit
 
@@ -184,3 +186,43 @@ npm run test:db   # RLS-/RPC-Tests, braucht laufendes Postgres (PGHOST/PGUSER/PG
 ```bash
 npm run lint && npm run typecheck && npm run build
 ```
+
+## Backups
+
+`scripts/backup-db.sh` sichert die **Daten** der Schemas `public` und `auth` nach `~/Backups/my-wish-list/`
+(Dateirechte 600, 30 Tage Aufbewahrung). Schema, Policies, Funktionen und Rechte stecken nicht im Backup, sie kommen
+beim Wiederherstellen aus `supabase/migrations/`. Neben jedem Dump liegt `*.migrations.txt` mit dem Migrationsstand.
+Nicht gesichert werden Sessions/Refresh-Tokens (ein Restore soll keine widerrufenen Logins wiederbeleben) und
+`rate_limits`. Ebenfalls nicht enthalten sind die Edge Function (liegt im Repo), ihre Secrets und die
+Projekteinstellungen (siehe [Supabase einrichten](#supabase-einrichten)).
+
+Voraussetzungen: Docker läuft, DB-Passwort im Schlüsselbund:
+
+```bash
+security add-generic-password -a "$USER" -s my-wish-list-db -w
+```
+
+Backup manuell bzw. als täglichen Job (launchd, 21:00 Uhr) einrichten:
+
+```bash
+scripts/backup-db.sh
+```
+
+```bash
+scripts/install-backup-job.sh
+```
+
+**Wiederherstellen:** Erst das Schema auf den Stand aus `*.migrations.txt` bringen (`npx supabase@3.0.0 db push`
+bzw. in ein neues Projekt), dann die Daten einspielen. Das Script prüft den Migrationsstand und läuft in einer
+Transaktion; schlägt etwas fehl, bleibt die Datenbank unverändert. Danach müssen sich alle neu anmelden.
+
+```bash
+scripts/restore-db.sh ~/Backups/my-wish-list/<datei>.dump
+```
+
+```bash
+scripts/restore-db.sh --replace ~/Backups/my-wish-list/<datei>.dump
+```
+
+Ohne `--replace` nur in eine leere Datenbank, mit `--replace` werden die vorhandenen Daten ersetzt. Für ein anderes
+Projekt `DB_USER=postgres.<project-ref>` (und ggf. `DB_HOST`, `PGPASSWORD`) setzen.
